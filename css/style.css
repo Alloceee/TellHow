@@ -1,0 +1,710 @@
+/*基础样式*/
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #f2f2f2;
+}
+
+ul, li {
+    float: left;
+    list-style: none;
+    display: block;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+/*返回顶部*/
+.scrollTop {
+    height: 40px;
+    line-height: 40px;
+    width: 40px;
+    font-family: "宋体", serif;
+    font-weight: bolder;
+    font-size: large;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    transform: rotate(270deg);
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    cursor: pointer;
+    display: none;
+    border-radius: 4px;
+}
+
+.scrollTop:hover {
+    background: rgba(1, 31, 255, 0.31);
+}
+
+/*整体导航栏样式*/
+.fix-nav {
+    width: 100%;
+    height: 100px;
+    background: rgba(5, 8, 11, 0.75);
+    position: absolute;
+    top: 0;
+    left: 0;
+    -moz-transition: 0.3s;
+    -o-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+    z-index: 2;
+}
+
+/*Log样式*/
+.nav-log {
+    width: auto;
+    height: 40px;
+    position: absolute;
+    left: 40px;
+    top: 30px;
+    -moz-transition: 0.3s;
+    -o-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+}
+
+.nav-log img {
+    display: block;
+    height: 40px;
+}
+
+/*导航栏中nav-item样式*/
+.nav-main {
+    height: 70px;
+    line-height: 70px;
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    -moz-transition: 0.3s;
+    -o-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+}
+
+.nav-main > ul > li {
+    height: 70px;
+    line-height: 70px;
+    margin: 0 15px;
+    font-weight: bold;
+    text-align: center;
+    position: relative;
+}
+
+.nav-main > ul > li > a {
+    color: white;
+    display: block;
+    height: 70px;
+    line-height: 70px;
+}
+
+.nav-main > ul > li:hover {
+    cursor: pointer;
+}
+
+/*导航栏上面的红色方块*/
+.nav-main > ul > li::after {
+    content: '';
+    height: 4px;
+    width: 100%;
+    position: absolute;
+    display: block;
+    background: transparent;
+    top: -30px;
+    left: 0;
+}
+
+.nav-main > ul > li:hover::after {
+    background: #be0000;
+}
+
+/*导航栏子菜单打开的三角形*/
+.nav-main > ul > li::before {
+    content: '';
+    position: absolute;
+    display: block;
+    height: 0;
+    width: 0;
+    left: 16px;
+    top: 45px;
+    border: 13px transparent solid;
+    border-bottom-color: rgb(211, 211, 220);
+    opacity: 0;
+}
+
+.nav-main > ul > li:hover::before {
+    transition: all .2s;
+    transition-delay: .2s;
+    opacity: 1;
+}
+
+.nav-main > ul::before {
+    content: '';
+    display: block;
+    height: 2px;
+    width: 30px;
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    background: #be0000;
+}
+
+/*添加hover效果*/
+.nav-main > ul > li:last-child:hover span,
+.nav-main > ul > li:nth-last-child(2):hover span {
+    color: rgba(5, 8, 11, 0.75);
+    background: white;
+}
+
+/*清除末尾按钮元素的after和before效果*/
+.nav-main > ul > li:first-child:hover::before,
+.nav-main > ul > li:last-child:hover::before,
+.nav-main > ul > li:nth-last-child(2):hover::before,
+.nav-main > ul > li:nth-child(4):hover::before {
+    border: none;
+}
+
+.nav-main > ul > li:last-child:hover::after,
+.nav-main > ul > li:nth-last-child(2):hover::after {
+    background: none;
+}
+
+/*二级菜单*/
+.drop {
+    position: absolute;
+    width: 140px;
+    left: -40px;
+    font-weight: normal;
+    font-size: 14px;
+    height: 0;
+    border-radius: 10px;
+    background: rgb(211, 211, 220);
+    padding: 0;
+    transition: all .2s;
+    overflow: hidden;
+    /*display: none;*/
+}
+
+.nav-main > ul > li:hover .drop {
+    height: auto;
+    padding: 10px 0;
+}
+
+.drop li {
+    background: rgb(211, 211, 220);
+    float: none;
+    height: 40px;
+    line-height: 40px;
+}
+
+.drop li:hover {
+    background: white;
+    cursor: pointer;
+}
+
+.drop li:hover a {
+    color: #cc0000;
+}
+
+/*搜索框*/
+.search {
+    height: 85px;
+    line-height: 60px;
+    background: white;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    padding-top: 15px;
+    display: none;
+}
+
+.search input {
+    display: inline-block;
+    width: 85%;
+    height: 50px;
+    line-height: 50px;
+    margin: 0 auto;
+    border: none;
+    border-bottom: 1px rgba(221, 221, 230, 0.81) solid;
+    outline: none;
+    padding: 0 10px;
+}
+
+.search input::placeholder {
+    color: #babac3;
+}
+
+.search input:focus {
+    border-color: #cc0000;
+}
+
+.search button {
+    display: inline-block;
+    height: 33px;
+    width: 60px;
+    background: #cc0000;
+    outline: none;
+    color: white;
+    border: 1px #cc0000 solid;
+    transition: all .3s;
+}
+
+.search button:hover {
+    cursor: pointer;
+    background: white;
+    color: #cc0000;
+}
+
+.search span {
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: lighter;
+    transition: all .3s;
+    color: #a2a2ab;
+    margin-left: 5px;
+}
+
+.search span:hover {
+    cursor: pointer;
+    transform: rotate(180deg);
+}
+
+/*搜索按钮和语言切换按钮*/
+.icon-search {
+    color: white;
+    font-size: 27px;
+    border: 1px white solid;
+    border-radius: 4px;
+}
+
+.language-tab {
+    display: block;
+    height: 29px;
+    width: 29px;
+    line-height: 29px;
+    color: white;
+    font-size: 17px;
+    border: 1px white solid;
+    border-radius: 4px;
+    margin-top: 19px;
+    margin-left: -17px;
+}
+
+.icon-search:hover, .language-tab:hover {
+    cursor: pointer;
+}
+
+/*轮播图*/
+.swiper-container {
+    width: 100%;
+    height: 725px;
+    overflow: hidden;
+}
+
+.swiper-container img {
+    display: block;
+    height: 725px;
+    width: 100%;
+}
+
+/*轮播图上的文字*/
+.img-word-1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 93px;
+    width: 557px;
+    background: url('../img/inkv01-txt01.png');
+    margin-left: -278.5px;
+    margin-top: 30px;
+    opacity: 0;
+    -moz-transition: 1s;
+    -o-transition: 1s;
+    -webkit-transition: 1s;
+    transition: 1s;
+
+}
+
+.img-word-2 {
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    width: 465px;
+    height: 374px;
+    background: url('../img/inkv02-txt01.png');
+    background-size: 465px 374px;
+    margin-left: -232.5px;
+    margin-top: 30px;
+    opacity: 0;
+    -moz-transition: 1s;
+    -o-transition: 1s;
+    -webkit-transition: 1s;
+    transition: 1s;
+}
+
+.img-word-3 {
+    position: absolute;
+    top: 50%;
+    left: 70%;
+    height: 245px;
+    width: 638px;
+    background: url('../img/inkv02-txt02.png');
+    background-size: 638px 245px;
+    margin-left: -319px;
+    margin-top: 30px;
+    opacity: 0;
+    -moz-transition: 1s;
+    -o-transition: 1s;
+    -webkit-transition: 1s;
+    transition: 1s;
+    transition-delay: .3s;
+
+}
+
+.swiper-slide-active .img-word-1 {
+    margin-top: -46.5px;
+    opacity: 1;
+}
+
+.swiper-slide-active .img-word-2 {
+    margin-top: -187px;
+    opacity: 1;
+}
+
+.swiper-slide-active .img-word-3 {
+    margin-top: -122.5px;
+    opacity: 1;
+}
+
+/*轮播图分页器样式*/
+.swiper-pagination-bullet {
+    background: rgba(20, 20, 20, 0.57);
+    height: 12px;
+    width: 12px;
+}
+
+.swiper-pagination-bullet-active {
+    background: rgba(190, 0, 0, 0.92);
+}
+
+/*轮播图探索更多*/
+.learn-more{
+    position: absolute;
+    height: 40px;
+    line-height: 30px;
+    text-align: center;
+    width: 80px;
+    bottom: 50px;
+    left: 50%;
+    z-index: 2;
+    margin-left: -36px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+}
+.learn-more span{
+    display: block;
+    font-family: "宋体", serif;
+    font-size: 20px;
+    transform: rotate(90deg);
+    animation: more 1.5s infinite;
+    opacity: 0;
+    margin-top: -10px;
+}
+.learn-more:hover{
+    cursor: pointer;
+}
+/*箭头动画*/
+@keyframes more {
+    0%{opacity: 0;margin-top:-10px;}
+    10%{opacity: 1;margin-top:-10px;}
+    90%{opacity: 1;margin-top:10px;}
+    to{opacity: 0;margin-top: 10px;}
+}
+/*主体部分*/
+.box1, .box2, .box3, .box4, .box5 {
+    height: 450px;
+    width: 100%;
+    background-size: cover;
+}
+
+/*主体居中样式*/
+.main-center {
+    width: 1160px;
+    margin: 0 auto;
+    position: relative;
+}
+
+div[class^='box'] a {
+    display: block;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    width: 130px;
+    background: rgba(240, 240, 255, 0.50);
+    border-radius: 12px;
+}
+
+div[class^='box'] a:hover {
+    background: rgba(203, 0, 0, 0.92);
+    color: white;
+}
+
+.box1 {
+    background: url('../img/img01.jpg') #183e68 center center no-repeat;
+}
+
+.box2 {
+    background: url('../img/img02.jpg') #183e68 center center no-repeat;
+}
+
+.box3 {
+    background: url('../img/img03.jpg') #183e68 center center no-repeat;
+}
+
+.box4 {
+    background: url('../img/img04.jpg') #183e68 center center no-repeat;
+}
+
+.box5 {
+    background: url('../img/img05.jpg') #183e68 center center no-repeat;
+}
+
+.box1-1, .box2-1, .box3-1, .box4-1, .box5-1 {
+    height: 300px;
+    width: 380px;
+    color: white;
+    padding: 20px 0;
+    opacity: 0;
+    margin-left: 0;
+}
+
+.box2-1 {
+    float: right;
+}
+
+.box4-1 {
+    margin-left: 30%;
+    color: black;
+}
+
+.box5-1 {
+    color: black;
+}
+
+.box1-1 h1, .box2-1 h1, .box3-1 h1, .box4-1 h1, .box5-1 h1 {
+    display: block;
+    height: 70px;
+    line-height: 70px;
+    font-size: 35px;
+    font-weight: normal;
+}
+
+.box1-1 p, .box2-1 p, .box3-1 p, .box4-1 p, .box5-1 p {
+    display: block;
+    line-height: 30px;
+    margin: 10px 0 30px 0;
+}
+
+/*新闻展示部分*/
+.news {
+    position: relative;
+    height: 600px;
+    width: 1160px;
+    margin: 40px auto 70px;
+}
+
+.news h1 {
+    display: block;
+    height: 90px;
+    line-height: 90px;
+    text-align: center;
+    font-weight: normal;
+    font-size: 38px;
+}
+
+.news ul li {
+    display: block;
+    float: left;
+    width: 31%;
+    height: 400px;
+    overflow: hidden;
+    margin: 10px;
+    background: white;
+}
+
+.news ul li a {
+    display: block;
+    height: 400px;
+    width: 100%;
+}
+
+.news ul li:hover {
+    box-shadow: rgba(97, 97, 105, 0.11) 10px 10px 10px 10px;
+}
+
+.news ul li:hover img {
+    margin-left: -5px;
+    height: 255px;
+}
+
+.news ul li .img {
+    height: 245px;
+    overflow: hidden;
+}
+
+.news ul li img {
+    display: block;
+    height: 245px;
+    transition: all .2s linear;
+}
+
+.news ul li h5 {
+    padding: 25px;
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.news ul li span {
+    color: #72727a;
+    margin-left: 25px;
+}
+
+.more-news {
+    height: 45px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+.more-news a {
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    width: 160px;
+    background: rgba(190, 190, 204, 0.31);
+    border-radius: 8px;
+    margin: 0 auto;
+}
+
+.more-news a:hover {
+    background: rgba(203, 0, 0, 0.92);
+    color: white;
+}
+
+/*footer样式*/
+.footer {
+    background: #012f78;
+    height: 230px;
+    color: white;
+}
+
+.footer-center {
+    width: 1160px;
+    margin: 0 auto;
+    padding: 30px 0;
+    font-size: 14px;
+    position: relative;
+}
+
+.footer-center a {
+    color: white;
+}
+
+.footer-center a:hover {
+    opacity: .7;
+    cursor: pointer;
+}
+
+.footer-1 {
+    height: 80px;
+}
+
+.footer-1 ul:first-child {
+    float: left;
+}
+
+.footer-1 ul:last-child {
+    float: right;
+}
+
+.footer-1 ul:first-child li {
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    width: 80px;
+}
+
+.footer-1 ul:last-child li {
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    width: 40px;
+}
+
+.footer-1 ul:last-child li i {
+    font-size: 20px;
+    color: #012f78;
+    background: white;
+    display: block;
+    height: 27px;
+    line-height: 27px;
+    width: 25px;
+    text-align: center;
+    border-radius: 3px;
+    margin-top: 15px;
+}
+
+.footer-1 ul:last-child li i:hover {
+    cursor: pointer;
+    opacity: .7;
+}
+
+.footer-1::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 100%;
+    background: white;
+    position: absolute;
+    top: 100px;
+}
+
+.footer-2 {
+    margin-top: 10px;
+}
+
+.footer-2 ul li {
+    height: 20px;
+    line-height: 20px;
+    width: 33.3%;
+}
+
+/*footer中微信二维码*/
+.icon-wechat-fill:hover + .wechat {
+    bottom: 100px;
+    opacity: 1;
+}
+
+.wechat {
+    position: absolute;
+    height: 230px;
+    width: 230px;
+    bottom: 170px;
+    right: 35px;
+    opacity: 0;
+    transition: all .7s;
+}
