@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>搜索界面</title>
+    <link rel="stylesheet" id="css-main" href="/css/oneui.css">
+    <link rel="stylesheet" href="/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" href="/plugins/slick/slick.min.css">
+    <link rel="stylesheet" href="/plugins/slick/slick-theme.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!-- 导航栏header -->
+<div th:replace="/home/comm/header :: header"></div>
+<!-- header end -->
+
+<div class="container">
+
+    <!-- 搜索区域 start -->
+    <div th:replace="/home/comm/search :: search"></div>
+    <!-- 搜索区域 end -->
+
+    <input type="hidden" th:value="${fight}" id="fight">
+    <div data-role="search_show">
+        <div class="content-grid push-50">
+            <!-- Simple Tiles -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <a class="block" href="javascript:void(0)">
+                        <div class="block-content block-content-full bg-default-lighter clearfix">
+                            <div class="col-sm-4">
+                                <span class="h4 font-w700">所属公司</span>
+                                <span class="h6 font-w400">飞机型号</span>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-12">
+                                    <span class="text-muted">起飞时间</span>
+                                    <i class="fa fa-exchange"></i>
+                                    <span class="text-muted">抵达时间</span>
+                                </div>
+                                <div class="col-sm-12">
+                                    <span class="h4 font-w700">开始地</span>
+                                    <i class="fa fa-exchange"></i>
+                                    <span class="h4 font-w700">目的地</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <span class="h6 font-w400">历时</span>
+                            </div>
+                            <div class="col-sm-2">
+                                <span class="h4 font-w700">价格</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="plane-show" id="search_show"></div>
+                <script id="search_plane" type="text/html">
+                    {{# layui.each( d, function(index, item){ }}
+                    <div class="col-lg-12">
+                        <a class="block block-link-hover3" href="javascript:void(0)" th:alt="点击添加航班起飞提醒">
+                            <div class="block-content block-content-full clearfix">
+                                <div class="col-sm-4">
+                                    <span class="h4 font-w700">{{ item.plane.company.name }}</span>
+                                    <span class="h6 font-w400">{{ item.plane.number }}</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="col-sm-12">
+                                        <span class="h6 text-muted">{{ item.startTime }}</span>
+                                        <i class="fa fa-exchange"></i>
+                                        <span class="h6 text-muted">{{ item.endTime }}</span>
+                                        <span class="h6 text-city">+1天</span>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <span class="h4 font-w700">{{ item.startAirport }}&nbsp;</span>
+                                        <i class="fa fa-exchange"></i>
+                                        <span class="h4 font-w700">&nbsp;{{ item.endAirport }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span class="h6 font-w400">{{# (item.endTime - item.startTime)}}</span>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span class="h4 font-w700 money">￥{{ item.price }}</span>
+                                </div>
+                            </div>
+                            <div class="clock_des" hidden="hidden">
+                                <div class="block-content block-content-full clearfix">
+                                    <form class="message_form form-horizontal" action="/clock/add" method="post" onsubmit="return false;">
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">提醒类型</label>
+                                            <div class="col-md-7">
+                                                <label class="css-input css-radio css-radio-primary push-10-r">
+                                                    <input type="radio" value="0" name="type" checked=""><span></span>手机号
+                                                </label>
+                                                <label class="css-input css-radio css-radio-primary">
+                                                    <input type="radio" value="1" name="type"><span></span>邮箱
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">手机号/邮箱</label>
+                                            <div class="col-md-4">
+                                                <input class="form-control" type="text"
+                                                       name="account" placeholder="手机号/邮箱">
+                                            </div>
+                                            <button class="col-md-3 btn btn-default btn-minw btn-rounded code_send"
+                                                    type="button">发送验证码
+                                            </button>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">验证码</label>
+                                            <div class="col-md-7">
+                                                <input class="form-control" type="text"
+                                                       name="phone_code" placeholder="验证码">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-9 col-md-offset-3">
+                                                <button class="btn btn-minw btn-rounded btn-info clock_add"
+                                                        type="submit">添加提醒
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {{# }); }}
+                    {{# if(d.length === 0){ }}
+                    无搜索数据
+                    {{# } }}
+                </script>
+            </div>
+            <!-- END Simple Tiles -->
+        </div>
+    </div>
+</div>
+
+<!-- footer start -->
+<div th:replace="/home/comm/footer :: footer"></div>
+<!-- footer end -->
+
+<!--返回顶部-->
+<div class="scrollTop">></div>
+
+<!-- 基础js应用 -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.scrollLock.min.js"></script>
+<script src="/js/jquery.appear.min.js"></script>
+<script src="/js/jquery.countTo.min.js"></script>
+<script src="/js/jquery.placeholder.min.js"></script>
+<script src="/js/js.cookie.min.js"></script>
+<script src="/js/app.js"></script>
+
+<!-- 插件js应用 -->
+<script src="/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="/plugins/slick/slick.min.js"></script>
+<script src="/plugins/layui/layui.js"></script>
+
+<script src="/base/base_search.js"></script>
+</body>
+</html>
