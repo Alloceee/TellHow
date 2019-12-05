@@ -1,19 +1,28 @@
 <template>
 	<div id="app">
-	<!-- 	<img alt="Vue logo" src="./assets/logo.png"> -->
+		<!-- 	<img alt="Vue logo" src="./assets/logo.png"> -->
 		<Header></Header>
-		<Search msg="Welcome to Your Vue.js App" />
+		<div class="container">
+			<Search/>
+		</div>
+		<Footer></Footer>
 	</div>
 </template>
 
 <script>
 	import Header from './components/home/comm/Header.vue'
 	import Search from './components/home/comm/Search.vue'
+	import Footer from './components/home/comm/Footer.vue'
+	import {scrollLock} from '../src/assets/js/jquery.scrollLock.min.js'
+	
 
 	export default {
 		name: 'app',
 		components: {
-		   Search,Header
+			Search,
+			Header,
+			Footer,
+			scrollLock
 		}
 	}
 </script>

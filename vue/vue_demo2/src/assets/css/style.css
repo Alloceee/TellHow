@@ -180,20 +180,7 @@ html,body{
 .error{
 	color: #BF0910;
 }
-/* footer */
-.footer-bottom{
-	background: white;
-	min-height: 150px;
-	padding: 30px;
-	line-height: 30px;
-	font-size: 13px;
-}
-.footer-bottom a{
-	color: #9F9F9F;
-}
-.footer-bottom a:hover{
-	text-decoration: underline;
-}
+
 /* 展示详情弹框 */
 .des_show{
 	margin-top: 20px;
