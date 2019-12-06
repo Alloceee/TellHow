@@ -151,7 +151,7 @@
 	}
 </script>
 
-<style>
+<style scoped="scoped">
 	/* 搜索区域 */
 	.search-show>.block {
 		position: relative;
@@ -202,4 +202,5 @@
 	.search-btn:hover {
 		background-image: linear-gradient(-90deg, #FF8D16 0%, #FFB513 100%);
 	}
+
 </style>

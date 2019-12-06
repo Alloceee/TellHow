@@ -61,7 +61,7 @@
 	}
 </script>
 
-<style>
+<style scoped="scoped">
 	/* footer */
 	.footer-bottom{
 		background: white;
