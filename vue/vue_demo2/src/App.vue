@@ -1,25 +1,15 @@
 <template>
 	<div id="app">
-		<Header></Header>
-		<div class="container">
-			<Search/>
-		</div>
-		<Footer></Footer>
+		<router-view/>
 	</div>
 </template>
 
 <script>
-	import Header from './components/home/comm/Header.vue'
-	import Search from './components/home/comm/Search.vue'
-	import Footer from './components/home/comm/Footer.vue'
-	// import '@/assets/js/app.js'
-
+	import Index from '@/components/home/Index.vue'
 	export default {
 		name: 'app',
 		components: {
-			Search,
-			Header,
-			Footer
+			Index
 		}
 	}
 </script>

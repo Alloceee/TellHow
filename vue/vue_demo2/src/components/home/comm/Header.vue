@@ -23,17 +23,17 @@
 				</div>
 			</div>
 		</div>
-		<Swiper></Swiper>
+		<Carsousel></Carsousel>
 	</div>
 
 </template>
 
 <script>
-	import Swiper from '@/components/home/comm/Swiper.vue'
+	import Carsousel from '@/components/home/utils/Carsousel.vue'
 	export default {
 		name: 'Header',
 		components: {
-			Swiper
+			Carsousel
 		}
 	}
 </script>
@@ -43,6 +43,8 @@
 		width: 100%;
 		position: absolute;
 		z-index: 2;
+		top: 0;
+		left: 0;
 	}
 	.header-1 {
 		height: 35px;
