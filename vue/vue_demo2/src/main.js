@@ -17,7 +17,14 @@ import '@/assets/js/bootstrap.min.js'
 // import '@/assets/base/base_index.js'
 import router from './router'
 import VueRouter from 'vue-router'
+import store from './store'
 
+var axios = require('axios')
+axios.defaults.baseURL = 'http://localhost:8443/api'
+// 使请求带上凭证信息
+axios.defaults.withCredentials = true
+
+Vue.prototype.$axios = axios
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 

@@ -1,5 +1,5 @@
 <template>
-	<el-row class="tac">
+	<el-row class="tac" style="min-height: 100%;">
 		<el-col :span="20">
 			<el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64"
 			 text-color="#fff" active-text-color="#ffd04b">
@@ -20,22 +20,17 @@
 					</template>
 					<el-menu-item-group>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/fight/add" :underline="false">
 								上传信息
 							</el-link>
 						</el-menu-item>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
-								批量文件上传
-							</el-link>
-						</el-menu-item>
-						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/fight/china" :underline="false">
 								查看国内航班
 							</el-link>
 						</el-menu-item>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/fight/abroad" :underline="false">
 								查看国外航班
 							</el-link>
 						</el-menu-item>
@@ -53,12 +48,7 @@
 							</el-link>
 						</el-menu-item>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
-								批量文件上传
-							</el-link>
-						</el-menu-item>
-						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/company/show" :underline="false">
 								查看公司
 							</el-link>
 						</el-menu-item>
@@ -71,17 +61,12 @@
 					</template>
 					<el-menu-item-group>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/plane/add" :underline="false">
 								添加客机
 							</el-link>
 						</el-menu-item>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
-								批量文件上传
-							</el-link>
-						</el-menu-item>
-						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/plane/show" :underline="false">
 								查看客机
 							</el-link>
 						</el-menu-item>
@@ -94,17 +79,12 @@
 					</template>
 					<el-menu-item-group>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/news/add" :underline="false">
 								上传动态
 							</el-link>
 						</el-menu-item>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
-								批量文件上传
-							</el-link>
-						</el-menu-item>
-						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/news/show" :underline="false">
 								查看动态
 							</el-link>
 						</el-menu-item>
@@ -135,7 +115,7 @@
 					</template>
 					<el-menu-item-group>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/hot/show" :underline="false">
 								查看热门城市
 							</el-link>
 						</el-menu-item>
@@ -148,8 +128,8 @@
 					</template>
 					<el-menu-item-group>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
-								查看热门城市
+							<el-link href="/admin/task/show" :underline="false">
+								查看定时器
 							</el-link>
 						</el-menu-item>
 					</el-menu-item-group>
@@ -166,12 +146,12 @@
 					</template>
 					<el-menu-item-group>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/log/sql" :underline="false">
 								数据库日志
 							</el-link>
 						</el-menu-item>
 						<el-menu-item index="1-1">
-							<el-link href="/admin" :underline="false">
+							<el-link href="/admin/log/error" :underline="false">
 								错误日志
 							</el-link>
 						</el-menu-item>

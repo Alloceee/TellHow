@@ -5,6 +5,10 @@ import Search from '@/components/home/Search'
 import Login from '@/components/admin/Login'
 import AdminIndex from '@/components/admin/Index'
 import CompanyAdd from '@/components/admin/company/Add'
+import CompanyShow from '@/components/admin/company/Show'
+import PlaneAdd from '@/components/admin/plane/Add'
+import PlaneShow from '@/components/admin/plane/Show'
+import PlaneEditor from '@/components/admin/plane/Editor'
 
 Vue.use(Router)
 
@@ -44,6 +48,27 @@ export default new Router({
 			path: '/admin/company/add',
 			name: 'CompanyAdd',
 			component: CompanyAdd,
+			meta: {
+				requireAuth: true
+			}
+		},{
+			path: '/admin/company/show',
+			name: 'CompanyShow',
+			component: CompanyShow,
+			meta: {
+				requireAuth: true
+			}
+		},{
+			path: '/admin/plane/add',
+			name: 'PlaneAdd',
+			component: PlaneAdd,
+			meta: {
+				requireAuth: true
+			}
+		},{
+			path: '/admin/plane/show',
+			name: 'PlaneShow',
+			component: PlaneShow,
 			meta: {
 				requireAuth: true
 			}

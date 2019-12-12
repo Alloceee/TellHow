@@ -2,7 +2,6 @@
 	<div class="container-full" data-role="footer">
 		<div class="container">
 			<div class="footer-icon">
-
 				<div class="col-xs-6 col-sm-4 col-lg-2 col-lg-offset-3">
 					<a class="block block-link-hover3 text-center" href="javascript:void(0)">
 						<div class="block-content block-content-full">
@@ -62,6 +61,9 @@
 </script>
 
 <style scoped="scoped">
+	.container-full{
+		margin-top: 20px;
+	}
 	/* footer */
 	.footer-bottom{
 		background: white;
