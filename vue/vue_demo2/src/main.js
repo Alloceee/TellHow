@@ -22,7 +22,7 @@ import store from './store'
 var axios = require('axios')
 axios.defaults.baseURL = 'http://localhost:8443/api'
 // 使请求带上凭证信息
-axios.defaults.withCredentials = true
+axios.defaults.withCredentials = false
 
 Vue.prototype.$axios = axios
 Vue.use(ElementUI)

@@ -45,6 +45,7 @@
             password: this.loginForm.password
           })
           .then(resp => {
+		  console.log(resp.data);
             if (resp.data.code === 200) {
               var data = resp.data.msg
 			  this.$message({
