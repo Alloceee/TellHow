@@ -65,7 +65,7 @@
 									<div class="col-sm-5">
 										<div class="form-material">
 											<h5 class="font-w300 push">出发地</h5>
-											<input type="text" id="abroad_start" value="" name="startCity" placeholder="可输入城市或机场" class="form-control" />
+											<RemoteSelect id="abroad_start" value="" name="startCity"></RemoteSelect>
 										</div>
 									</div>
 									<div class="col-sm-2">
@@ -75,7 +75,7 @@
 
 										<div class="form-material">
 											<h5 class="font-w300 push">目的地</h5>
-											<input type="text" id="abroad_end" value="" name="entCity" placeholder="可输入城市或机场" class="form-control" />
+											<RemoteSelect id="abroad_start" value="" name="startCity"></RemoteSelect>
 										</div>
 									</div>
 
@@ -120,17 +120,18 @@
 			DateTimePicker,
 			RemoteSelect,
 			InfinateList
-		},	
+		},
 	}
 </script>
 
 <style scoped="scoped">
 	/* 搜索区域 */
-	.el-tab-pane{
-		overflow:auto;
+	.el-tab-pane {
+		overflow: auto;
 		min-height: 260px;
 	}
-	.search-show >.block {
+
+	.search-show>.block {
 		position: relative;
 		min-height: 290px;
 	}

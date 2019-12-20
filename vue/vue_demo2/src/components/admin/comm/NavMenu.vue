@@ -111,8 +111,22 @@
 				<el-submenu index="6">
 					<template slot="title">
 						<i class="el-icon-location"></i>
-						<span>热门城市管理</span>
+						<span>城市管理</span>
 					</template>
+					<el-menu-item-group>
+						<el-menu-item index="1-1">
+							<el-link href="/admin/hot/show" :underline="false">
+								上传城市
+							</el-link>
+						</el-menu-item>
+					</el-menu-item-group>
+					<el-menu-item-group>
+						<el-menu-item index="1-1">
+							<el-link href="/admin/hot/show" :underline="false">
+								管理城市
+							</el-link>
+						</el-menu-item>
+					</el-menu-item-group>
 					<el-menu-item-group>
 						<el-menu-item index="1-1">
 							<el-link href="/admin/hot/show" :underline="false">

@@ -54,10 +54,11 @@
 								message: data,
 								type: 'success'
 							})
-							_this.$store.commit('login', data)
+							//记住密码
+							// _this.$store.commit('login', data)
 							var path = _this.$route.query.redirect
 							_this.$router.replace({
-								path: path === '/' || path === undefined ? '/admin/dashboard' : path
+								path: path === '/admin/index' || path === undefined ? '/admin' : path
 							})
 						} else if (resp.data.code === 500) {
 							this.$message({

@@ -8,7 +8,6 @@ import CompanyAdd from '@/components/admin/company/Add'
 import CompanyShow from '@/components/admin/company/Show'
 import PlaneAdd from '@/components/admin/plane/Add'
 import PlaneShow from '@/components/admin/plane/Show'
-import PlaneEditor from '@/components/admin/plane/Editor'
 
 Vue.use(Router)
 

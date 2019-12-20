@@ -8,17 +8,13 @@
 			</el-col>
 			<el-col :span="2" :offset="14">
 				<el-dropdown>
-					<i class="el-icon-setting" style="margin-right: 15px"></i>
+					<el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>查看</el-dropdown-item>
-						<el-dropdown-item>新增</el-dropdown-item>
-						<el-dropdown-item>删除</el-dropdown-item>
+						<el-dropdown-item>王小虎</el-dropdown-item>
+						<el-dropdown-item>注销</el-dropdown-item>
+						<el-dropdown-item>锁定账号</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
-				<span>王小虎</span>
-			</el-col>
-			<el-col :span="2">
-				<el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
 			</el-col>
 		</el-row>
 	</div>
