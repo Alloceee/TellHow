@@ -11,7 +11,7 @@
 								<span>{{ props.row.name }}</span>
 							</el-form-item>
 							<el-form-item label="公司详情">
-								<span>{{ props.row.desc }}</span>
+								<span>{{ props.row.description }}</span>
 							</el-form-item>
 						</el-form>
 					</template>
@@ -83,8 +83,8 @@
 						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 					</el-upload>
 				</el-form-item>
-				<el-form-item label="公司介绍" :label-width="formLabelWidth" prop="desc">
-					<el-input type="textarea" :rows="7" v-model="company.desc"></el-input>
+				<el-form-item label="公司介绍" :label-width="formLabelWidth" prop="description">
+					<el-input type="textarea" :rows="7" v-model="company.description"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -112,42 +112,7 @@
 					id: '21',
 					icon: 'http://www.yewenshu.top/FvqzOvcwhaNhm3nE1U2OFD0XD6_o',
 					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄'
-				}, {
-					id: '2',
-					icon: 'http://www.yewenshu.top/FtT05qhCUynDSBnyYu7Lg_zEJnbL',
-					name: '上海',
-					desc: '上海市普陀区金沙江路 1517 弄'
-				}, {
-					id: '3',
-					icon: 'http://www.yewenshu.top/Fi2KHPOlAnQphX2TtafgELGnsIUu',
-					name: '深圳',
-					desc: '上海市普陀区金沙江路 1519 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '背景航空',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '哈尔滨航空',
-					desc: '上海市普陀区金沙江路 1516 弄'
+					description: '上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄'
 				}],
 				key: '',
 				imageUrl: '',
@@ -155,7 +120,7 @@
 					id: '',
 					name: '',
 					icon: '',
-					desc: ''
+					description: ''
 				},
 				formLabelWidth: '120px',
 				rules: {
@@ -175,7 +140,7 @@
 						required: true,
 						message: '请上传公司标题'
 					}],
-					desc: [{
+					description: [{
 						required: true,
 						message: '请填写公司介绍',
 						trigger: 'blur'
@@ -183,30 +148,43 @@
 				}
 			}
 		},
+		created() {
+			var _this = this;
+			this.$axios
+				.get('/admin/company/all')
+				.then(resp => {
+					if (resp.data.code === 200) {
+						var data = resp.data.data;
+						_this.tableData = data;
+					}
+				})
+				.catch(failResponse => {})
+		},
 		methods: {
 			// 编辑
 			handleEdit(index, row) {
 				this.company.id = row.id;
 				this.company.name = row.name;
-				this.company.desc = row.desc;
+				this.company.description = row.description;
 				this.company.icon = row.icon;
 				this.dialogTableVisible = true;
 				this.dialogFormVisible = true;
 			},
 			openDel(index, row) {
 				this.del = true;
-				this.delData = row.id;
+				this.delData = [row];
 			},
 			// 删除
 			handleDelete() {
 				alert("单选删除");
 				console.log(this.delData);
-				this.delete(this.delDate);
+				this.delete();
 				this.del = false;
 			},
 			deleteAll() {
 				alert("全选删除");
-				this.delete(this.multipleSelection);
+				this.delData = this.multipleSelection
+				this.delete();
 				console.log(this.multipleSelection);
 				this.allDel = false;
 			},
@@ -271,23 +249,23 @@
 					})
 				alert(`当前页: ${val}`);
 			},
-			delete(delDate) {
+			delete() {
+				var _this = this;
 				//发送删除请求
 				this.$axios
-					.post('/admin/company/del', {
-						companies: delDate
-					})
+					.post('/admin/company/del', {'companies':this.delData})
 					.then(resp => {
 						if (resp.data.code === 200) {
 							var data = resp.data.msg;
 							this.tableData = data;
+							this.$message({
+								message: '删除成功',
+								type: 'success'
+							});
+						} else {
+							this.$message.error('删除出错');
 						}
 					})
-				this.$message({
-					message: '删除成功',
-					type: 'success'
-				});
-				this.$message.error('删除出错');
 			},
 			//搜索表单信息
 			search() {
