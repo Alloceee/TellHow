@@ -8,6 +8,8 @@ import CompanyAdd from '@/components/admin/company/Add'
 import CompanyShow from '@/components/admin/company/Show'
 import PlaneAdd from '@/components/admin/plane/Add'
 import PlaneShow from '@/components/admin/plane/Show'
+import NewsAdd from '@/components/admin/news/Add'
+import NewsShow from '@/components/admin/news/Show'
 
 Vue.use(Router)
 
@@ -68,6 +70,20 @@ export default new Router({
 			path: '/admin/plane/show',
 			name: 'PlaneShow',
 			component: PlaneShow,
+			meta: {
+				requireAuth: true
+			}
+		},{
+			path: '/admin/news/add',
+			name: 'NewsAdd',
+			component: NewsAdd,
+			meta: {
+				requireAuth: true
+			}
+		},{
+			path: '/admin/news/show',
+			name: 'NewsShow',
+			component: NewsShow,
 			meta: {
 				requireAuth: true
 			}

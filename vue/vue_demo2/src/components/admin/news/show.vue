@@ -11,7 +11,7 @@
 								<span>{{ props.row.name }}</span>
 							</el-form-item>
 							<el-form-item label="公司详情">
-								<span>{{ props.row.desc }}</span>
+								<span>{{ props.row.description }}</span>
 							</el-form-item>
 						</el-form>
 					</template>
@@ -30,13 +30,13 @@
 				</el-table-column>
 				<el-table-column align="right">
 					<template slot="header" slot-scope="scope">
-						<el-row :gutter="20">
-							<el-col :span="20">
+						<el-row :gutter="10">
+							<el-col :span="18">
 								<el-input v-model="key" @change="search" size="mini" placeholder="输入关键字搜索">
 									<i slot="prefix" class="el-input__icon el-icon-search"></i>
 								</el-input>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="2">
 								<el-popover placement="top" width="160" v-model="allDel">
 									<p>确定一次删除所选内容吗？</p>
 									<div style="text-align: right; margin: 0">
@@ -47,6 +47,23 @@
 										<i class="el-icon-delete"></i>
 									</el-button>
 								</el-popover>
+							</el-col>
+							<el-col :span="2">
+								<el-popover placement="top" width="200">
+									<p>导出excel</p>
+									<div style="text-align: right; margin: 0">
+										<el-button type="primary" size="mini" @click="exportSelect()">所选数据</el-button>
+										<el-button type="primary" size="mini" @click="exportAll()">所有数据</el-button>
+									</div>
+									<el-button size="mini" slot="reference">
+										<i class="el-icon-document-add"></i>
+									</el-button>
+								</el-popover>
+							</el-col>
+							<el-col :span="2">
+								<el-button size="mini">
+									<i class="el-icon-printer"></i>
+								</el-button>
 							</el-col>
 						</el-row>
 					</template>
@@ -61,7 +78,7 @@
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<el-pagination small="" layout="total, sizes, prev, pager, next, jumper" :total="1000" @size-change="handleSizeChange"
+		<el-pagination small="" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal" @size-change="handleSizeChange"
 		 @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[7, 20, 40, 70,100]" :page-size="pageSize">
 		</el-pagination>
 		<el-dialog title="提示" :visible.sync="del" width="30%" center>
@@ -77,14 +94,14 @@
 					<el-input v-model="company.name" autocomplete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="公司图标" :label-width="formLabelWidth" prop="icon">
-					<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
+					<el-upload class="avatar-uploader" action="http://localhost:8443/api/admin/company/icon" :show-file-list="false"
 					 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
 						<img v-if="company.icon" :src="company.icon" class="avatar">
 						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 					</el-upload>
 				</el-form-item>
-				<el-form-item label="公司介绍" :label-width="formLabelWidth" prop="desc">
-					<el-input type="textarea" :rows="7" v-model="company.desc"></el-input>
+				<el-form-item label="公司介绍" :label-width="formLabelWidth" prop="description">
+					<el-input type="textarea" :rows="7" v-model="company.description"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -97,7 +114,7 @@
 
 <script>
 	export default {
-		name: 'CompanyShow',
+		name: 'NewsShow',
 		data() {
 			return {
 				allDel: false,
@@ -106,56 +123,17 @@
 				dialogFormVisible: false,
 				delData: '',
 				currentPage: 1,
-				pageSize: 4,
+				pageSize: 7,
+				pageTotal: '',
 				tableHeight: window.innerHeight - 250,
-				tableData: [{
-					id: '21',
-					icon: 'http://www.yewenshu.top/FvqzOvcwhaNhm3nE1U2OFD0XD6_o',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄'
-				}, {
-					id: '2',
-					icon: 'http://www.yewenshu.top/FtT05qhCUynDSBnyYu7Lg_zEJnbL',
-					name: '上海',
-					desc: '上海市普陀区金沙江路 1517 弄'
-				}, {
-					id: '3',
-					icon: 'http://www.yewenshu.top/Fi2KHPOlAnQphX2TtafgELGnsIUu',
-					name: '深圳',
-					desc: '上海市普陀区金沙江路 1519 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '背景航空',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '哈尔滨航空',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}],
+				tableData: '',
 				key: '',
 				imageUrl: '',
 				company: {
 					id: '',
 					name: '',
 					icon: '',
-					desc: ''
+					description: ''
 				},
 				formLabelWidth: '120px',
 				rules: {
@@ -175,7 +153,7 @@
 						required: true,
 						message: '请上传公司标题'
 					}],
-					desc: [{
+					description: [{
 						required: true,
 						message: '请填写公司介绍',
 						trigger: 'blur'
@@ -183,31 +161,47 @@
 				}
 			}
 		},
+		created() {
+			this.initDate();
+		},
 		methods: {
+			initDate() {
+				this.$axios
+					.post('/admin/company/all', {
+						pageSize: this.pageSize,
+						currentPage: this.currentPage
+					})
+					.then(resp => {
+						if (resp.data.code === 200) {
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
+						}
+					})
+					.catch(failResponse => {})
+			},
 			// 编辑
 			handleEdit(index, row) {
 				this.company.id = row.id;
 				this.company.name = row.name;
-				this.company.desc = row.desc;
+				this.company.description = row.description;
 				this.company.icon = row.icon;
 				this.dialogTableVisible = true;
 				this.dialogFormVisible = true;
 			},
 			openDel(index, row) {
 				this.del = true;
-				this.delData = row.id;
+				this.delData = [row];
 			},
 			// 删除
 			handleDelete() {
-				alert("单选删除");
 				console.log(this.delData);
-				this.delete(this.delDate);
+				this.delete();
 				this.del = false;
 			},
 			deleteAll() {
-				alert("全选删除");
-				this.delete(this.multipleSelection);
-				console.log(this.multipleSelection);
+				this.delData = this.multipleSelection
+				this.delete();
 				this.allDel = false;
 			},
 			toggleSelection(rows) {
@@ -225,8 +219,14 @@
 			},
 			// 头像上传
 			handleAvatarSuccess(res, file) {
-				this.imageUrl = URL.createObjectURL(file.raw);
-				this.companyForm.resource = res;
+				if (res.code === 200) {
+					this.$message({
+						message: res.msg,
+						type: 'success'
+					})
+					this.imageUrl = URL.createObjectURL(file.raw);
+					this.company.icon = res.data;
+				}
 			},
 			beforeAvatarUpload(file) {
 				const isJPG = file.type === ('image/jpeg') || ('image/png');
@@ -244,64 +244,103 @@
 			handleSizeChange(val) {
 				this.pageSize = val;
 				this.$axios
-					.post('/admin/company/show', {
+					.post('/admin/company/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
-							this.tableData = data;
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
 						}
 					})
-				alert(`每页 ${val} 条`);
 			},
 			handleCurrentChange(val) {
 				this.currentPage = val;
 				this.$axios
-					.post('/admin/company/show', {
+					.post('/admin/company/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
-							this.tableData = data;
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
 						}
 					})
-				alert(`当前页: ${val}`);
 			},
-			delete(delDate) {
+			delete() {
+				var _this = this;
 				//发送删除请求
 				this.$axios
 					.post('/admin/company/del', {
-						companies: delDate
+						'companies': this.delData
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
 							this.tableData = data;
+							this.$message({
+								message: resp.data.msg,
+								type: 'success'
+							});
+							this.initDate();
+						} else {
+							this.$message.error('删除出错');
 						}
 					})
-				this.$message({
-					message: '删除成功',
-					type: 'success'
-				});
-				this.$message.error('删除出错');
+			},
+			exportSelect() {
+				this.$axios
+					.post('/admin/export/company', {
+						'companies': this.multipleSelection
+					})
+					.then(res => {
+						var blob = new Blob([res.data]); 
+						var downloadElement = document.createElement('a');
+						var href = window.URL.createObjectURL(blob); //创建下载的链接
+						downloadElement.href = href;
+						downloadElement.download = headers['content-disposition']; //下载后文件名
+						document.body.appendChild(downloadElement);
+						downloadElement.click(); //点击下载
+						document.body.removeChild(downloadElement); //下载完成移除元素
+						window.URL.revokeObjectURL(href); //释放掉blob对象
+					})
+			},
+			exportAll() {
+				this.$axios
+					.post('/admin/export/company', {
+						'companies': this.tableData
+					})
+					.then(res => {
+						var blob = new Blob([res.data]); //指定格式为vnd.ms-excel
+						var downloadElement = document.createElement('a');
+						var href = window.URL.createObjectURL(blob); //创建下载的链接
+						downloadElement.href = href;
+						downloadElement.download = '12.xls'; //下载后文件名
+						document.body.appendChild(downloadElement);
+						downloadElement.click(); //点击下载
+						document.body.removeChild(downloadElement); //下载完成移除元素
+						window.URL.revokeObjectURL(href); //释放掉blob对象
+					})
 			},
 			//搜索表单信息
 			search() {
-				console.log(this.key);
 				this.$axios
-					.post('/admin/company/search', {
+					.post('/admin/company/all', {
+						pageSize: this.pageSize,
+						currentPage: this.currentPage,
 						key: this.key
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
-							this.tableData = data;
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
 						}
 					})
+					.catch(failResponse => {})
 			},
 			//提交表单
 			submit(formName) {
@@ -312,15 +351,16 @@
 								id: this.company.id,
 								name: this.company.name,
 								icon: this.company.icon,
-								description: this.company.desc
+								description: this.company.description
 							})
 							.then(resp => {
 								if (resp.data.code === 200) {
 									var data = resp.data.msg;
 									this.$message({
-										message: '修改成功',
+										message: data,
 										type: 'success'
 									});
+									this.initDate();
 									this.dialogTableVisible = false;
 									this.dialogFormVisible = false;
 								}

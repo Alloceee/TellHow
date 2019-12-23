@@ -1,28 +1,34 @@
 <template>
 	<div>
-		<el-page-header @back="goBack" content="添加航空公司"></el-page-header>
+		<el-page-header @back="goBack" content="添加客机信息"></el-page-header>
 		<el-row :gutter="20">
 			<el-col :span="12">
-				<el-form :model="companyForm" :rules="rules" ref="companyForm" label-width="100px" class="demo-ruleForm">
-					<el-form-item label="公司名称" prop="name">
-						<el-input v-model="companyForm.name"></el-input>
+				<el-form :model="plane" :rules="rules" ref="plane" label-width="100px" class="demo-ruleForm">
+					<el-form-item label="所属公司" prop="companyId">
+						<el-select v-model="plane.companyId" placeholder="请选择">
+							<el-option v-for="item in plane.company" :key="item.id" :label="item.name" :value="item.id">
+							</el-option>
+						</el-select>
 					</el-form-item>
-					<el-form-item label="公司图标" prop="icon">
-						<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
-						 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-							<img v-if="imageUrl" :src="imageUrl" class="avatar">
-							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-						</el-upload>
+					<el-form-item label="客机机型" prop="model">
+						<el-input v-model="plane.model"></el-input>
 					</el-form-item>
-					<el-form-item label="公司介绍" prop="desc">
-						<el-input type="textarea" v-model="companyForm.desc"></el-input>
+					<el-form-item label="客机序号" prop="number">
+						<el-input v-model="plane.number"></el-input>
+					</el-form-item>
+					<el-form-item label="客机型号" prop="type">
+						<el-radio-group v-model="plane.type">
+							<el-radio :label="0">小型</el-radio>
+							<el-radio :label="1">中型</el-radio>
+							<el-radio :label="2">大型</el-radio>
+						</el-radio-group>
 					</el-form-item>
 					<el-form-item>
 						<el-button @click="fileUpload">
 							<i class="el-icon-folder-add"></i>
 						</el-button>
-						<el-button type="primary" @click="submitForm('companyForm')">添 加</el-button>
-						<el-button @click="resetForm('companyForm')">重 置</el-button>
+						<el-button type="primary" @click="submitForm('plane')">添 加</el-button>
+						<el-button @click="resetForm('plane')">重 置</el-button>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -42,37 +48,44 @@
 
 <script>
 	export default {
-		name: 'CompanyAdd',
+		name: 'NewsAdd',
+		created() {
+			this.$axios
+				.get('/admin/company/all')
+				.then(resp => {
+					this.plane.company = resp.data.data
+				})
+		},
 		data() {
 			return {
 				imageUrl: '',
-				companyForm: {
-					name: '',
-					icon: '',
-					desc: ''
+				plane: {
+					model: '',
+					number: '',
+					company: '',
+					type: 1,
+					companyId: ''
 				},
 				fileForm: false,
 				fileList: '',
 				rules: {
-					name: [{
-							required: true,
-							message: '请输入公司名称',
-							trigger: 'blur'
-						},
-						{
-							min: 2,
-							max: 10,
-							message: '长度在 2 到 10 个字符',
-							trigger: 'blur'
-						}
-					],
-					icon: [{
+					companyId: [{
 						required: true,
-						message: '请上传公司标题'
+						message: '请选择所属公司',
+						trigger: 'blur'
 					}],
-					desc: [{
+					model: [{
 						required: true,
-						message: '请填写公司介绍',
+						message: '请填写客机机型'
+					}],
+					number: [{
+						required: true,
+						message: '请填写客机序号',
+						trigger: 'blur'
+					}],
+					type: [{
+						required: true,
+						message: '请选择客机型号',
 						trigger: 'blur'
 					}]
 				}
@@ -82,9 +95,28 @@
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						alert('submit!');
+						this.$axios
+							.post('/admin/plane/add', {
+								model: this.plane.model,
+								number: this.plane.number,
+								type: this.plane.type,
+								companyId: this.plane.companyId
+							})
+							.then(resp => {
+								if (resp.data.code === 200) {
+									var data = resp.data.msg;
+									this.$message({
+										message: data,
+										type: 'success'
+									});
+									var path = _this.$route.query.redirect
+									_this.$router.replace({
+										path: path === '/admin/plane/add' || path === undefined ? '/admin/plane/show' : path
+									})
+								}
+							})
+							.catch(failResponse => {})
 					} else {
-						alert('error submit!!');
 						return false;
 					}
 				});
@@ -97,7 +129,7 @@
 			},
 			handleAvatarSuccess(res, file) {
 				this.imageUrl = URL.createObjectURL(file.raw);
-				this.companyForm.resource = res;
+				this.plane.resource = res;
 			},
 			beforeAvatarUpload(file) {
 				const isJPG = file.type === ('image/jpeg') || ('image/png');

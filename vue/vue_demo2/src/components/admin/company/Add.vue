@@ -8,14 +8,14 @@
 						<el-input v-model="companyForm.name"></el-input>
 					</el-form-item>
 					<el-form-item label="公司图标" prop="icon">
-						<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
-						 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+						<el-upload class="avatar-uploader" action="http://localhost:8443/api/admin/company/icon" :show-file-list="false" :on-success="handleAvatarSuccess"
+						 :before-upload="beforeAvatarUpload">
 							<img v-if="imageUrl" :src="imageUrl" class="avatar">
 							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 						</el-upload>
 					</el-form-item>
-					<el-form-item label="公司介绍" prop="desc">
-						<el-input type="textarea" v-model="companyForm.desc"></el-input>
+					<el-form-item label="公司介绍" prop="description">
+						<el-input type="textarea" :rows="7" v-model="companyForm.description"></el-input>
 					</el-form-item>
 					<el-form-item>
 						<el-button @click="fileUpload">
@@ -28,12 +28,13 @@
 			</el-col>
 		</el-row>
 		<el-dialog title="批量文件上传" :visible.sync="fileForm">
-			<el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-change="handleChange">
+			<el-upload class="upload-demo" action="http://localhost:8443/api/admin/company/file"
+			 :on-change="handleChange" :before-upload="beforeFileUpload" :on-success="handleFileSuccess">
 				<el-button type="primary">点击上传</el-button>
-				<div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+				<div slot="tip" class="el-upload__tip">默认上传没有表头，一行标题</div>
 			</el-upload>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="fileForm = false">取 消</el-button>
+				<el-button @click="fileForm = false">完 成</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -49,7 +50,7 @@
 				companyForm: {
 					name: '',
 					icon: '',
-					desc: ''
+					description: ''
 				},
 				fileForm: false,
 				fileList: '',
@@ -70,7 +71,7 @@
 						required: true,
 						message: '请上传公司标题'
 					}],
-					desc: [{
+					description: [{
 						required: true,
 						message: '请填写公司介绍',
 						trigger: 'blur'
@@ -80,9 +81,30 @@
 		},
 		methods: {
 			submitForm(formName) {
+				var _this = this;
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						alert('submit!');
+						this.$axios
+							.post('/admin/company/add', {
+								id: this.companyForm.id,
+								name: this.companyForm.name,
+								icon: this.companyForm.icon,
+								description: this.companyForm.description
+							})
+							.then(resp => {
+								if (resp.data.code === 200) {
+									var data = resp.data.msg;
+									this.$message({
+										message: data,
+										type: 'success'
+									});
+									var path = _this.$route.query.redirect
+									_this.$router.replace({
+										path: path === '/admin/company/add' || path === undefined ? '/admin/company/show' : path
+									})
+								}
+							})
+							.catch(failResponse => {})
 					} else {
 						alert('error submit!!');
 						return false;
@@ -96,8 +118,14 @@
 				console.log('go back');
 			},
 			handleAvatarSuccess(res, file) {
-				this.imageUrl = URL.createObjectURL(file.raw);
-				this.companyForm.resource = res;
+				if(res.code===200){
+					this.$message({
+						message: res.msg,
+						type:'success'
+					})
+					this.imageUrl = URL.createObjectURL(file.raw);
+					this.companyForm.icon = res.data;
+				}
 			},
 			beforeAvatarUpload(file) {
 				const isJPG = file.type === ('image/jpeg') || ('image/png');
@@ -117,7 +145,26 @@
 			handleChange(file, fileList) {
 				const isExcel = file.type === ('xls') || ('xlsx');
 				this.fileList = fileList.slice(-3);
-			}
+			},
+			handleFileSuccess(res, file) {
+				if(res.code===200){
+					this.$message({
+						message: res.msg,
+						type:'success'
+					})
+					var path = this.$route.query.redirect
+					this.$router.replace({
+						path: path === '/admin/company/add' || path === undefined ? '/admin/company/show' : path
+					})
+				}
+			},
+			beforeFileUpload(file) {
+				const isExcel = file.type === ('xls') || ('xlsx');
+				if (!isExcel) {
+					this.$message.error('仅支持上传excel文件');
+				}
+				return isExcel;
+			},
 		}
 	}
 </script>

@@ -108,47 +108,7 @@
 				currentPage: 1,
 				pageSize: 4,
 				tableHeight: window.innerHeight - 250,
-				tableData: [{
-					id: '21',
-					icon: 'http://www.yewenshu.top/FvqzOvcwhaNhm3nE1U2OFD0XD6_o',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄'
-				}, {
-					id: '2',
-					icon: 'http://www.yewenshu.top/FtT05qhCUynDSBnyYu7Lg_zEJnbL',
-					name: '上海',
-					desc: '上海市普陀区金沙江路 1517 弄'
-				}, {
-					id: '3',
-					icon: 'http://www.yewenshu.top/Fi2KHPOlAnQphX2TtafgELGnsIUu',
-					name: '深圳',
-					desc: '上海市普陀区金沙江路 1519 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '背景航空',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '哈尔滨航空',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}],
+				tableData: '',
 				key: '',
 				imageUrl: '',
 				company: {
