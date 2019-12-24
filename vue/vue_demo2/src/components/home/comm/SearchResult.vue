@@ -11,7 +11,7 @@
 			<el-col :key='i' :span="24" v-for="i in count" class="infinite-list-item">
 				<el-card shadow="never">
 					{{ i }}
-					<i @click="addClock(i)" class="el-icon-alarm-clock"></i>
+					<el-button @click="addClock(i)" size="mini">添加提醒<i class="el-icon-alarm-clock"></i></el-button>
 				</el-card>
 			</el-col>
 		</el-row>
@@ -86,11 +86,31 @@
 				this.count += 2
 			},
 			sendCode() {
-				console.log(this.clockForm.email);
 				//发送验证码
-				this.send.sendType = "success";
-				this.send.sendStatus = "disabled";
-				this.send.sendMessage = "l";
+				this.$axios
+					.post('/send', {
+						email: this.clockForm.email,
+						type: 0
+					})
+					.then(resp => {
+						if (resp.data.code === 200) {
+							// if (resp.data.data.return_code == "00000") {
+								this.$message({
+									type: 'success',
+									message: '验证码发送成功，请注意接收'
+								})
+								this.send.sendType = "success";
+								this.send.sendStatus = "disabled";
+								this.setInterval();
+							// } else {
+							// 	this.$message.error("验证码发送错误，错误代码:" + resp.data.data.return_code);
+							// }
+						} else if (resp.data.code === 500) {
+							this.$message.error(resp.data.msg);
+						} else {
+							this.$message.error("验证码发送错误");
+						}
+					})
 			},
 			addClock(plane) {
 				console.log(plane)
@@ -99,11 +119,27 @@
 				this.clockForm.plane = plane;
 			},
 			submitForm(formName) {
+				var data = {
+					id: this.clockForm.plane,
+					phone: this.clockForm.phone,
+					email: this.clockForm.email,
+					code: this.clockForm.code
+				}
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						console.log(this[formName]);
 						//提交表单
-
+						this.$axios
+							.post('/clock', JSON.stringify(data))
+							.then(resp => {
+								if (resp.data.code === 200) {
+									this.$message({
+										type: 'success',
+										message: resp.data.msg
+									})
+								} else {
+									this.$message.error("发生错误，请联系管理员");
+								}
+							})
 						//添加成功
 						this.closeForm(formName);
 					} else {
@@ -112,12 +148,25 @@
 				})
 			},
 			closeForm(formName) {
+				clearInterval(this.interval);
 				this.dialogFormVisible = false;
 				this.send.sendType = "";
 				this.send.sendStatus = false;
 				this.send.sendMessage = "发送验证码";
+			},
+			setInterval(){
+				var time = 60;
+				 this.interval = setInterval(() => {
+					this.send.sendMessage = time;
+					time-=1;
+					if(time===-1){
+					  clearInterval(this.interval);
+					  this.send.sendType = "";
+					  this.send.sendStatus = false;
+					  this.send.sendMessage = "重新发送验证码";
+					}
+				},1000)
 			}
-
 		}
 	}
 </script>
