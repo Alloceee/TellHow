@@ -7,26 +7,26 @@
 				<el-table-column type="expand">
 					<template slot-scope="props">
 						<el-form label-position="left" inline class="demo-table-expand">
-							<el-form-item label="公司名称">
-								<span>{{ props.row.name }}</span>
+							<el-form-item label="通知航班">
+								<span>{{ props.row.notify_fight }}</span>
 							</el-form-item>
-							<el-form-item label="公司详情">
-								<span>{{ props.row.description }}</span>
+							<el-form-item label="通知内容">
+								<span>{{ props.row.notify_content }}</span>
 							</el-form-item>
 						</el-form>
 					</template>
 				</el-table-column>
-				<el-table-column label="ID" width="100">
-					<template slot-scope="scope">
-						<span style="margin-left: 10px">{{ scope.row.id }}</span>
-					</template>
+				<el-table-column label="标题" width="200" prop="title">
 				</el-table-column>
-				<el-table-column label="公司名称" width="240" prop="name">
+				<el-table-column label="计划开始时间" width="200" prop="planStartTime">
 				</el-table-column>
-				<el-table-column label="公司图标" width="200" prop="icon">
-					<template slot-scope="scope">
-						<el-avatar shape="square" v-if="scope.row.icon" :size="50" :src="scope.row.icon"></el-avatar>
-					</template>
+				<el-table-column label="计划结束时间" width="200" prop="planEndTime">
+				</el-table-column>
+				<el-table-column label="状态" width="100" prop="status">
+					 <template slot-scope="scope">
+						 <el-tag v-if="scope.row.status===0">计划正常</el-tag>
+						 <el-tag v-else-if="scope.row.status===1">延迟</el-tag>
+					  </template>
 				</el-table-column>
 				<el-table-column align="right">
 					<template slot="header" slot-scope="scope">
@@ -89,19 +89,23 @@
 			</span>
 		</el-dialog>
 		<el-dialog title="修改公司信息" :visible.sync="dialogFormVisible">
-			<el-form :model="company" ref="company" :rules="rules">
-				<el-form-item label="公司名称" :label-width="formLabelWidth" prop="name">
-					<el-input v-model="company.name" autocomplete="off"></el-input>
+			<el-form :model="news" :rules="rules" ref="news" label-width="100px" class="demo-ruleForm">
+				<el-form-item label="新闻标题" prop="title">
+					<el-input v-model="news.title"></el-input>
 				</el-form-item>
-				<el-form-item label="公司图标" :label-width="formLabelWidth" prop="icon">
-					<el-upload class="avatar-uploader" action="http://localhost:8443/api/admin/company/icon" :show-file-list="false"
-					 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-						<img v-if="company.icon" :src="company.icon" class="avatar">
-						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload>
+				<el-form-item label="航班计划时间" prop="content">
+					<DateTimePicker ref="planTime"  v-model="news.planTime"></DateTimePicker>
 				</el-form-item>
-				<el-form-item label="公司介绍" :label-width="formLabelWidth" prop="description">
-					<el-input type="textarea" :rows="7" v-model="company.description"></el-input>
+				<el-form-item label="通知航班" prop="notifyFight">
+					<el-cascader placeholder="试试搜索：指南" v-model="news.notifyFight" :options="options" :props="{ multiple: true }"
+					 filterable></el-cascader>
+				</el-form-item>
+				<el-form-item label="通知内容" prop="notifyContent">
+					<el-input type="textarea" :rows="7" v-model="news.notifyContent"></el-input>
+				</el-form-item>
+				<el-form-item label="航班状态" prop="status">
+					<el-switch v-model="news.status" active-color="#13ce66" inactive-color="#ff4949" active-text="计划" inactive-text="延误">
+					</el-switch>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -113,8 +117,12 @@
 </template>
 
 <script>
+	import DateTimePicker from '@/components/home/utils/DateTimePicker.vue'
 	export default {
 		name: 'NewsShow',
+		components: {
+			DateTimePicker
+		},
 		data() {
 			return {
 				allDel: false,
@@ -124,40 +132,30 @@
 				delData: '',
 				currentPage: 1,
 				pageSize: 7,
-				pageTotal: '',
+				pageTotal: 0,
 				tableHeight: window.innerHeight - 250,
 				tableData: '',
 				key: '',
 				imageUrl: '',
-				company: {
-					id: '',
-					name: '',
-					icon: '',
-					description: ''
+				news: {
+					title: '',
+					notifyFight: '',
+					notifyContent: '',
+					status: '',
+					planTime:''
 				},
+				options: [{
+					value: 'zhinan',
+					label: '起飞时间12-25',
+					}],
 				formLabelWidth: '120px',
 				rules: {
-					name: [{
+					title: [{
 							required: true,
 							message: '请输入公司名称',
 							trigger: 'blur'
-						},
-						{
-							min: 2,
-							max: 10,
-							message: '长度在 2 到 10 个字符',
-							trigger: 'blur'
 						}
-					],
-					icon: [{
-						required: true,
-						message: '请上传公司标题'
-					}],
-					description: [{
-						required: true,
-						message: '请填写公司介绍',
-						trigger: 'blur'
-					}]
+					]
 				}
 			}
 		},
@@ -167,7 +165,7 @@
 		methods: {
 			initDate() {
 				this.$axios
-					.post('/admin/company/all', {
+					.post('/admin/news/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage
 					})
@@ -182,10 +180,11 @@
 			},
 			// 编辑
 			handleEdit(index, row) {
-				this.company.id = row.id;
-				this.company.name = row.name;
-				this.company.description = row.description;
-				this.company.icon = row.icon;
+				this.news.title = row.title;
+				this.news.planTime = [row.planStartTime,row.planEndTime];
+				this.news.notifyFight = row.notifyFight;
+				this.news.notifyContent = row.notifyContent;
+				this.news.status = row.status===0?true:false;
 				this.dialogTableVisible = true;
 				this.dialogFormVisible = true;
 			},
@@ -195,7 +194,6 @@
 			},
 			// 删除
 			handleDelete() {
-				console.log(this.delData);
 				this.delete();
 				this.del = false;
 			},
@@ -244,7 +242,7 @@
 			handleSizeChange(val) {
 				this.pageSize = val;
 				this.$axios
-					.post('/admin/company/all', {
+					.post('/admin/news/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage
 					})
@@ -259,7 +257,7 @@
 			handleCurrentChange(val) {
 				this.currentPage = val;
 				this.$axios
-					.post('/admin/company/all', {
+					.post('/admin/news/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage
 					})
@@ -275,8 +273,8 @@
 				var _this = this;
 				//发送删除请求
 				this.$axios
-					.post('/admin/company/del', {
-						'companies': this.delData
+					.post('/admin/news/del', {
+						'news': this.delData
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
@@ -293,7 +291,7 @@
 			},
 			exportSelect() {
 				this.$axios
-					.post('/admin/export/company', {
+					.post('/admin/export/news', {
 						'companies': this.multipleSelection
 					})
 					.then(res => {
@@ -310,7 +308,7 @@
 			},
 			exportAll() {
 				this.$axios
-					.post('/admin/export/company', {
+					.post('/admin/export/news', {
 						'companies': this.tableData
 					})
 					.then(res => {
@@ -328,7 +326,7 @@
 			//搜索表单信息
 			search() {
 				this.$axios
-					.post('/admin/company/all', {
+					.post('/admin/news/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage,
 						key: this.key
@@ -344,32 +342,33 @@
 			},
 			//提交表单
 			submit(formName) {
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						this.$axios
-							.post('/admin/company/update', {
-								id: this.company.id,
-								name: this.company.name,
-								icon: this.company.icon,
-								description: this.company.description
-							})
-							.then(resp => {
-								if (resp.data.code === 200) {
-									var data = resp.data.msg;
-									this.$message({
-										message: data,
-										type: 'success'
-									});
-									this.initDate();
-									this.dialogTableVisible = false;
-									this.dialogFormVisible = false;
-								}
-							})
-					} else {
-						this.$message.error('修改出错');
-						return false;
-					}
-				});
+				console.log(this.$refs.planTime.time);
+			// 	this.$refs[formName].validate((valid) => {
+			// 		if (valid) {
+			// 			this.$axios
+			// 				.post('/admin/company/update', {
+			// 					id: this.company.id,
+			// 					name: this.company.name,
+			// 					icon: this.company.icon,
+			// 					description: this.company.description
+			// 				})
+			// 				.then(resp => {
+			// 					if (resp.data.code === 200) {
+			// 						var data = resp.data.msg;
+			// 						this.$message({
+			// 							message: data,
+			// 							type: 'success'
+			// 						});
+			// 						this.initDate();
+			// 						this.dialogTableVisible = false;
+			// 						this.dialogFormVisible = false;
+			// 					}
+			// 				})
+			// 		} else {
+			// 			this.$message.error('修改出错');
+			// 			return false;
+			// 		}
+			// 	});
 			}
 		}
 	}

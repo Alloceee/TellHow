@@ -81,7 +81,6 @@
 		},
 		methods: {
 			submitForm(formName) {
-				var _this = this;
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
 						this.$axios
@@ -98,8 +97,8 @@
 										message: data,
 										type: 'success'
 									});
-									var path = _this.$route.query.redirect
-									_this.$router.replace({
+									var path = this.$route.query.redirect
+									this.$router.replace({
 										path: path === '/admin/company/add' || path === undefined ? '/admin/company/show' : path
 									})
 								}

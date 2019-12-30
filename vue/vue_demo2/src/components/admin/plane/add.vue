@@ -5,10 +5,14 @@
 			<el-col :span="12">
 				<el-form :model="plane" :rules="rules" ref="plane" label-width="100px" class="demo-ruleForm">
 					<el-form-item label="所属公司" prop="companyId">
-						<el-select v-model="plane.companyId" placeholder="请选择">
-							<el-option v-for="item in plane.company" :key="item.id" :label="item.name" :value="item.id">
-							</el-option>
-						</el-select>
+						 <el-select v-model="plane.companyId" filterable placeholder="请选择">
+						    <el-option
+						      v-for="item in plane.company"
+						      :key="item.id"
+						      :label="item.name"
+						      :value="item.id">
+						    </el-option>
+						  </el-select>
 					</el-form-item>
 					<el-form-item label="客机机型" prop="model">
 						<el-input v-model="plane.model"></el-input>
@@ -109,8 +113,8 @@
 										message: data,
 										type: 'success'
 									});
-									var path = _this.$route.query.redirect
-									_this.$router.replace({
+									var path = this.$route.query.redirect
+									this.$router.replace({
 										path: path === '/admin/plane/add' || path === undefined ? '/admin/plane/show' : path
 									})
 								}

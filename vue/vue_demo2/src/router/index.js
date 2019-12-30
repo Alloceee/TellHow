@@ -10,6 +10,9 @@ import PlaneAdd from '@/components/admin/plane/Add'
 import PlaneShow from '@/components/admin/plane/Show'
 import NewsAdd from '@/components/admin/news/Add'
 import NewsShow from '@/components/admin/news/Show'
+import FightAdd from '@/components/admin/fight/Add'
+import FightShow from '@/components/admin/fight/Show'
+import NewShow from '@/components/home/News'
 
 Vue.use(Router)
 
@@ -34,6 +37,10 @@ export default new Router({
 		path: '/login',
 		name: 'Login',
 		component: Login
+	},  {
+		path: '/news/*',
+		name: 'NewShow',
+		component: NewShow
 	}, {
 		path: '/admin',
 		name: 'Admin',
@@ -84,6 +91,20 @@ export default new Router({
 			path: '/admin/news/show',
 			name: 'NewsShow',
 			component: NewsShow,
+			meta: {
+				requireAuth: true
+			}
+		},{
+			path: '/admin/fight/add',
+			name: 'FightAdd',
+			component: FightAdd,
+			meta: {
+				requireAuth: true
+			}
+		},{
+			path: '/admin/fight/show',
+			name: 'FightShow',
+			component: FightShow,
 			meta: {
 				requireAuth: true
 			}

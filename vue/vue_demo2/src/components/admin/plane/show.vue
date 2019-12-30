@@ -4,39 +4,28 @@
 			<el-table :data="tableData" :height="tableHeight" style="width: 100%" @selection-change="handleSelectionChange">
 				<el-table-column type="selection" width="55">
 				</el-table-column>
-				<el-table-column type="expand">
-					<template slot-scope="props">
-						<el-form label-position="left" inline class="demo-table-expand">
-							<el-form-item label="公司名称">
-								<span>{{ props.row.name }}</span>
-							</el-form-item>
-							<el-form-item label="公司详情">
-								<span>{{ props.row.desc }}</span>
-							</el-form-item>
-						</el-form>
-					</template>
+				<el-table-column label="所属公司" width="200" prop="companyId">
 				</el-table-column>
-				<el-table-column label="ID" width="100">
-					<template slot-scope="scope">
-						<span style="margin-left: 10px">{{ scope.row.id }}</span>
-					</template>
+				<el-table-column label="客机机型" width="200" prop="model">
 				</el-table-column>
-				<el-table-column label="公司名称" width="240" prop="name">
+				<el-table-column label="客机序号" width="200" prop="number">
 				</el-table-column>
-				<el-table-column label="公司图标" width="200" prop="icon">
-					<template slot-scope="scope">
-						<el-avatar shape="square" v-if="scope.row.icon" :size="50" :src="scope.row.icon"></el-avatar>
-					</template>
+				<el-table-column label="客机型号" width="100" prop="type">
+					 <template slot-scope="scope">
+						  <el-tag size="medium" v-if="scope.row.type===0">小型</el-tag>
+						  <el-tag size="medium" v-else-if="scope.row.type===1">中型</el-tag>
+						  <el-tag size="medium" v-else-if="scope.row.type===2">大型</el-tag>
+					  </template>
 				</el-table-column>
 				<el-table-column align="right">
 					<template slot="header" slot-scope="scope">
-						<el-row :gutter="20">
-							<el-col :span="20">
+						<el-row :gutter="10">
+							<el-col :span="18">
 								<el-input v-model="key" @change="search" size="mini" placeholder="输入关键字搜索">
 									<i slot="prefix" class="el-input__icon el-icon-search"></i>
 								</el-input>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="2">
 								<el-popover placement="top" width="160" v-model="allDel">
 									<p>确定一次删除所选内容吗？</p>
 									<div style="text-align: right; margin: 0">
@@ -47,6 +36,23 @@
 										<i class="el-icon-delete"></i>
 									</el-button>
 								</el-popover>
+							</el-col>
+							<el-col :span="2">
+								<el-popover placement="top" width="200">
+									<p>导出excel</p>
+									<div style="text-align: right; margin: 0">
+										<el-button type="primary" size="mini" @click="exportSelect()">所选数据</el-button>
+										<el-button type="primary" size="mini" @click="exportAll()">所有数据</el-button>
+									</div>
+									<el-button size="mini" slot="reference">
+										<i class="el-icon-document-add"></i>
+									</el-button>
+								</el-popover>
+							</el-col>
+							<el-col :span="2">
+								<el-button size="mini">
+									<i class="el-icon-printer"></i>
+								</el-button>
 							</el-col>
 						</el-row>
 					</template>
@@ -61,7 +67,7 @@
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<el-pagination small="" layout="total, sizes, prev, pager, next, jumper" :total="1000" @size-change="handleSizeChange"
+		<el-pagination small="" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal" @size-change="handleSizeChange"
 		 @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[7, 20, 40, 70,100]" :page-size="pageSize">
 		</el-pagination>
 		<el-dialog title="提示" :visible.sync="del" width="30%" center>
@@ -71,20 +77,26 @@
 				<el-button type="primary" @click="handleDelete()">确 定</el-button>
 			</span>
 		</el-dialog>
-		<el-dialog title="修改公司信息" :visible.sync="dialogFormVisible">
-			<el-form :model="company" ref="company" :rules="rules">
-				<el-form-item label="公司名称" :label-width="formLabelWidth" prop="name">
-					<el-input v-model="company.name" autocomplete="off"></el-input>
+		<el-dialog title="修改客机信息" :visible.sync="dialogFormVisible">
+			<el-form :model="plane" :rules="rules" ref="plane" label-width="100px" class="demo-ruleForm">
+				<el-form-item label="所属公司" prop="companyId">
+					<el-select v-model="plane.companyId" placeholder="请选择">
+						<el-option v-for="item in plane.company" :key="item.id" :label="item.name" :value="item.id">
+						</el-option>
+					</el-select>
 				</el-form-item>
-				<el-form-item label="公司图标" :label-width="formLabelWidth" prop="icon">
-					<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
-					 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-						<img v-if="company.icon" :src="company.icon" class="avatar">
-						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload>
+				<el-form-item label="客机机型" prop="model">
+					<el-input v-model="plane.model"></el-input>
 				</el-form-item>
-				<el-form-item label="公司介绍" :label-width="formLabelWidth" prop="desc">
-					<el-input type="textarea" :rows="7" v-model="company.desc"></el-input>
+				<el-form-item label="客机序号" prop="number">
+					<el-input v-model="plane.number"></el-input>
+				</el-form-item>
+				<el-form-item label="客机型号" prop="type">
+					<el-radio-group v-model="plane.type">
+						<el-radio :label="0">小型</el-radio>
+						<el-radio :label="1">中型</el-radio>
+						<el-radio :label="2">大型</el-radio>
+					</el-radio-group>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -96,8 +108,12 @@
 </template>
 
 <script>
+	import DateTimePicker from '@/components/home/utils/DateTimePicker.vue'
 	export default {
-		name: 'CompanyShow',
+		name: 'PlaneShow',
+		components: {
+			DateTimePicker
+		},
 		data() {
 			return {
 				allDel: false,
@@ -106,68 +122,73 @@
 				dialogFormVisible: false,
 				delData: '',
 				currentPage: 1,
-				pageSize: 4,
+				pageSize: 7,
+				pageTotal: '',
 				tableHeight: window.innerHeight - 250,
 				tableData: '',
 				key: '',
 				imageUrl: '',
-				company: {
-					id: '',
-					name: '',
-					icon: '',
-					desc: ''
+				plane: {
+					companyId: '',
+					model: '',
+					number: '',
+					type: ''
 				},
+				options: [{
+					value: 'zhinan',
+					label: '起飞时间12-25',
+					}],
 				formLabelWidth: '120px',
 				rules: {
-					name: [{
+					title: [{
 							required: true,
 							message: '请输入公司名称',
 							trigger: 'blur'
-						},
-						{
-							min: 2,
-							max: 10,
-							message: '长度在 2 到 10 个字符',
-							trigger: 'blur'
 						}
-					],
-					icon: [{
-						required: true,
-						message: '请上传公司标题'
-					}],
-					desc: [{
-						required: true,
-						message: '请填写公司介绍',
-						trigger: 'blur'
-					}]
+					]
 				}
 			}
 		},
+		created() {
+			this.initDate();
+		},
 		methods: {
+			initDate() {
+				this.$axios
+					.post('/admin/plane/all', {
+						pageSize: this.pageSize,
+						currentPage: this.currentPage
+					})
+					.then(resp => {
+						if (resp.data.code === 200) {
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
+						}
+					})
+					.catch(failResponse => {})
+			},
 			// 编辑
 			handleEdit(index, row) {
-				this.company.id = row.id;
-				this.company.name = row.name;
-				this.company.desc = row.desc;
-				this.company.icon = row.icon;
+				this.plane.companyId = row.companyId;
+				this.plane.model = row.model;
+				this.plane.number = row.number;
+				this.plane.type = row.type;
 				this.dialogTableVisible = true;
 				this.dialogFormVisible = true;
 			},
 			openDel(index, row) {
 				this.del = true;
-				this.delData = row.id;
+				this.delData = [row];
 			},
 			// 删除
 			handleDelete() {
-				alert("单选删除");
-				console.log(this.delData);
-				this.delete(this.delDate);
+				this.delete();
 				this.del = false;
 			},
 			deleteAll() {
-				alert("全选删除");
-				this.delete(this.multipleSelection);
-				console.log(this.multipleSelection);
+				this.delData = this.multipleSelection
+				this.delete();
 				this.allDel = false;
 			},
 			toggleSelection(rows) {
@@ -185,8 +206,14 @@
 			},
 			// 头像上传
 			handleAvatarSuccess(res, file) {
-				this.imageUrl = URL.createObjectURL(file.raw);
-				this.companyForm.resource = res;
+				if (res.code === 200) {
+					this.$message({
+						message: res.msg,
+						type: 'success'
+					})
+					this.imageUrl = URL.createObjectURL(file.raw);
+					this.company.icon = res.data;
+				}
 			},
 			beforeAvatarUpload(file) {
 				const isJPG = file.type === ('image/jpeg') || ('image/png');
@@ -204,83 +231,123 @@
 			handleSizeChange(val) {
 				this.pageSize = val;
 				this.$axios
-					.post('/admin/company/show', {
+					.post('/admin/news/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
-							this.tableData = data;
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
 						}
 					})
-				alert(`每页 ${val} 条`);
 			},
 			handleCurrentChange(val) {
 				this.currentPage = val;
 				this.$axios
-					.post('/admin/company/show', {
+					.post('/admin/plane/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
-							this.tableData = data;
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
 						}
 					})
-				alert(`当前页: ${val}`);
 			},
-			delete(delDate) {
+			delete() {
+				var _this = this;
 				//发送删除请求
 				this.$axios
-					.post('/admin/company/del', {
-						companies: delDate
+					.post('/admin/plane/del', {
+						'planes': this.delData
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
 							this.tableData = data;
+							this.$message({
+								message: resp.data.msg,
+								type: 'success'
+							});
+							this.initDate();
+						} else {
+							this.$message.error('删除出错');
 						}
 					})
-				this.$message({
-					message: '删除成功',
-					type: 'success'
-				});
-				this.$message.error('删除出错');
+			},
+			exportSelect() {
+				this.$axios
+					.post('/admin/export/planes', {
+						'companies': this.multipleSelection
+					})
+					.then(res => {
+						var blob = new Blob([res.data]); 
+						var downloadElement = document.createElement('a');
+						var href = window.URL.createObjectURL(blob); //创建下载的链接
+						downloadElement.href = href;
+						downloadElement.download = headers['content-disposition']; //下载后文件名
+						document.body.appendChild(downloadElement);
+						downloadElement.click(); //点击下载
+						document.body.removeChild(downloadElement); //下载完成移除元素
+						window.URL.revokeObjectURL(href); //释放掉blob对象
+					})
+			},
+			exportAll() {
+				this.$axios
+					.post('/admin/export/planes', {
+						'planes': this.tableData
+					})
+					.then(res => {
+						var blob = new Blob([res.data]); //指定格式为vnd.ms-excel
+						var downloadElement = document.createElement('a');
+						var href = window.URL.createObjectURL(blob); //创建下载的链接
+						downloadElement.href = href;
+						downloadElement.download = '12.xls'; //下载后文件名
+						document.body.appendChild(downloadElement);
+						downloadElement.click(); //点击下载
+						document.body.removeChild(downloadElement); //下载完成移除元素
+						window.URL.revokeObjectURL(href); //释放掉blob对象
+					})
 			},
 			//搜索表单信息
 			search() {
-				console.log(this.key);
 				this.$axios
-					.post('/admin/company/search', {
+					.post('/admin/plane/all', {
+						pageSize: this.pageSize,
+						currentPage: this.currentPage,
 						key: this.key
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
-							this.tableData = data;
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
 						}
 					})
+					.catch(failResponse => {})
 			},
 			//提交表单
 			submit(formName) {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
 						this.$axios
-							.post('/admin/company/update', {
+							.post('/admin/plane/update', {
 								id: this.company.id,
 								name: this.company.name,
 								icon: this.company.icon,
-								description: this.company.desc
+								description: this.company.description
 							})
 							.then(resp => {
 								if (resp.data.code === 200) {
 									var data = resp.data.msg;
 									this.$message({
-										message: '修改成功',
+										message: data,
 										type: 'success'
 									});
+									this.initDate();
 									this.dialogTableVisible = false;
 									this.dialogFormVisible = false;
 								}
@@ -299,38 +366,5 @@
 	.el-pagination {
 		float: right;
 		margin: 15px;
-	}
-
-	.avatar-uploader {
-		border: 1px dashed #d9d9d9;
-		border-radius: 6px;
-		cursor: pointer;
-		position: relative;
-		overflow: hidden;
-		width: 178px;
-		height: 178px;
-		line-height: 178px;
-		text-align: center;
-	}
-
-	.avatar-uploader:hover {
-		border-color: #409EFF;
-	}
-
-	.avatar-uploader-icon {
-		font-size: 28px;
-		color: #8c939d;
-		width: 178px;
-		height: 178px;
-		line-height: 178px;
-		text-align: center;
-		position: relative;
-		margin-left: -89px;
-	}
-
-	.avatar {
-		width: 178px;
-		height: 178px;
-		display: block;
 	}
 </style>

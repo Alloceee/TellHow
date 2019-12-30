@@ -1,28 +1,48 @@
 <template>
 	<div>
-		<el-page-header @back="goBack" content="添加航空公司"></el-page-header>
 		<el-row :gutter="20">
 			<el-col :span="12">
-				<el-form :model="companyForm" :rules="rules" ref="companyForm" label-width="100px" class="demo-ruleForm">
-					<el-form-item label="公司名称" prop="name">
-						<el-input v-model="companyForm.name"></el-input>
+				<el-form :model="fight" :rules="rules" ref="news" label-width="100px" class="demo-ruleForm">
+					<el-form-item label="所属客机" prop="planeId">
+						 <el-select v-model="fight.planeId" filterable placeholder="请选择">
+						    <el-option
+						      v-for="item in fight.plane"
+						      :key="item.id"
+						      :label="item.number"
+						      :value="item.id">
+							    <span style="float: left">{{ item.number }}</span>
+							    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.model }}</span>
+						    </el-option>
+						  </el-select>
 					</el-form-item>
-					<el-form-item label="公司图标" prop="icon">
-						<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
-						 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-							<img v-if="imageUrl" :src="imageUrl" class="avatar">
-							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-						</el-upload>
+					<el-form-item label="目的地" prop="endCity">
+						<el-input v-model="fight.endCity"></el-input>
 					</el-form-item>
-					<el-form-item label="公司介绍" prop="desc">
-						<el-input type="textarea" v-model="companyForm.desc"></el-input>
+					<el-form-item label="始发地" prop="startCity">
+						<el-input v-model="fight.startCity"></el-input>
+					</el-form-item>
+					<el-form-item label="起飞抵达时间" prop="content">
+						<DateTimePicker ref="time"></DateTimePicker>
+					</el-form-item>
+					<el-form-item label="起飞机场" prop="startAirport">
+						<el-input v-model="fight.startAirport"></el-input>
+					</el-form-item>
+					<el-form-item label="目的机场" prop="endAirport">
+						<el-input v-model="fight.endAirport"></el-input>
+					</el-form-item>
+					<el-form-item label="价格" prop="price">
+						<el-input v-model="fight.price"></el-input>
+					</el-form-item>
+					<el-form-item label="航班类型" prop="type">
+						 <el-radio v-model="fight.type" label="1">国内航班</el-radio>
+						  <el-radio v-model="fight.type" label="2">国外航班</el-radio>
 					</el-form-item>
 					<el-form-item>
 						<el-button @click="fileUpload">
 							<i class="el-icon-folder-add"></i>
 						</el-button>
-						<el-button type="primary" @click="submitForm('companyForm')">添 加</el-button>
-						<el-button @click="resetForm('companyForm')">重 置</el-button>
+						<el-button type="primary" @click="submitForm('news')">添 加</el-button>
+						<el-button @click="resetForm('news')">重 置</el-button>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -41,50 +61,65 @@
 </template>
 
 <script>
+	import DateTimePicker from '@/components/home/utils/DateTimePicker.vue'
 	export default {
-		name: 'CompanyAdd',
+		name: 'FightAdd',
+		components: {
+			DateTimePicker
+		},
+		created() {
+		this.$axios
+			.get('/admin/plane/all')
+			.then(resp => {
+				this.fight.plane = resp.data.data
+			})
+		},
 		data() {
 			return {
 				imageUrl: '',
-				companyForm: {
-					name: '',
-					icon: '',
-					desc: ''
+				fight: {
+					type: "1",
+					plane:''
 				},
 				fileForm: false,
 				fileList: '',
 				rules: {
-					name: [{
-							required: true,
-							message: '请输入公司名称',
-							trigger: 'blur'
-						},
-						{
-							min: 2,
-							max: 10,
-							message: '长度在 2 到 10 个字符',
-							trigger: 'blur'
-						}
-					],
-					icon: [{
+					title: [{
 						required: true,
-						message: '请上传公司标题'
-					}],
-					desc: [{
-						required: true,
-						message: '请填写公司介绍',
+						message: '请选择新闻标题',
 						trigger: 'blur'
 					}]
-				}
+				},
 			};
 		},
 		methods: {
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						alert('submit!');
+						this.$axios
+							.post('/admin/news/add', {
+								title: this.news.title,
+								planStartTime: this.$refs.time.time[0],
+								planEndTime: this.$refs.time.time[1],
+								notifyFight: this.news.notifyFight,
+								notifyContent: this.news.notifyContent,
+								status: this.news.status ? 0 : 1
+							})
+							.then(resp => {
+								if (resp.data.code === 200) {
+									var data = resp.data.msg;
+									this.$message({
+										message: data,
+										type: 'success'
+									});
+									var path = this.$route.query.redirect
+									this.$router.replace({
+										path: path === '/admin/news/add' || path === undefined ? '/admin/news/show' : path
+									})
+								}
+							})
+							.catch(failResponse => {})
 					} else {
-						alert('error submit!!');
 						return false;
 					}
 				});
@@ -94,22 +129,6 @@
 			},
 			goBack() {
 				console.log('go back');
-			},
-			handleAvatarSuccess(res, file) {
-				this.imageUrl = URL.createObjectURL(file.raw);
-				this.companyForm.resource = res;
-			},
-			beforeAvatarUpload(file) {
-				const isJPG = file.type === ('image/jpeg') || ('image/png');
-				const isLt5M = file.size / 1024 / 1024 < 5;
-
-				if (!isJPG) {
-					this.$message.error('上传头像图片只能是 JPG 格式!');
-				}
-				if (!isLt5M) {
-					this.$message.error('上传头像图片大小不能超过 5MB!');
-				}
-				return isJPG && isLt5M;
 			},
 			fileUpload() {
 				this.fileForm = true;
@@ -133,38 +152,5 @@
 
 	.el-upload input[type="file"] {
 		display: none !important;
-	}
-
-	.avatar-uploader {
-		border: 1px dashed #d9d9d9;
-		border-radius: 6px;
-		cursor: pointer;
-		position: relative;
-		overflow: hidden;
-		width: 178px;
-		height: 178px;
-		line-height: 178px;
-		text-align: center;
-	}
-
-	.avatar-uploader:hover {
-		border-color: #409EFF;
-	}
-
-	.avatar-uploader-icon {
-		font-size: 28px;
-		color: #8c939d;
-		width: 178px;
-		height: 178px;
-		line-height: 178px;
-		text-align: center;
-		position: relative;
-		margin-left: -89px;
-	}
-
-	.avatar {
-		width: 178px;
-		height: 178px;
-		display: block;
 	}
 </style>

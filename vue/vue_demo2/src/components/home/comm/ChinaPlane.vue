@@ -2,6 +2,14 @@
 	<div>
 		<el-divider content-position="left">国内航班</el-divider>
 		<el-card shadow="never">
+			 <div style="text-align: right;width: 100%;">
+			    <el-radio-group v-model="hotCity" size="small">
+			      <el-radio-button label="上海"></el-radio-button>
+			      <el-radio-button label="北京"></el-radio-button>
+			      <el-radio-button label="广州"></el-radio-button>
+			      <el-radio-button label="深圳"></el-radio-button>
+			    </el-radio-group>
+			  </div>
 			<el-row :gutter="12">
 				<el-col :span="8" v-for="plane in this.chinaPlane">
 					<el-popover placement="right" width="430" trigger="click">
@@ -24,11 +32,11 @@
 						</el-row>
 						<el-card shadow="hover" slot="reference">
 							<el-row :gutter="20">
-								<el-col>{{ plane.startCity }} <i class="el-icon-sort"></i> {{ plane.endCity }}</el-col>
-								<el-col>{{ plane.startTime }}</el-col>
-								<el-col>
-									<h4 style="color: indianred;float: right;">{{ plane.price }} ￥</h4>
+								<el-col :span="12">{{ plane.startCity }} <i class="el-icon-caret-right"></i> {{ plane.endCity }}</el-col>
+								<el-col :span="12">
+									<h4 style="color: indianred;float: right;">{{ plane.price }} ￥起</h4>
 								</el-col>
+								<el-col>{{ plane.startTime }}</el-col>
 							</el-row>
 						</el-card>
 					</el-popover>
@@ -71,6 +79,7 @@
 		name: 'ChinaPlane',
 		data() {
 			return {
+				hotCity:'深圳',
 				gridData: '',
 				chinaPlane: '',
 				dialogTableVisible: false,
@@ -157,7 +166,7 @@
 			},
 			submitForm(formName) {
 				var data = {
-					id: this.clockForm.plane,
+					planeId: this.clockForm.plane,
 					phone: this.clockForm.phone,
 					email: this.clockForm.email,
 					code: this.clockForm.code

@@ -113,14 +113,13 @@
 					})
 			},
 			addClock(plane) {
-				console.log(plane)
 				this.dialogTableVisible = true;
 				this.dialogFormVisible = true;
 				this.clockForm.plane = plane;
 			},
 			submitForm(formName) {
 				var data = {
-					id: this.clockForm.plane,
+					planeId: this.clockForm.plane,
 					phone: this.clockForm.phone,
 					email: this.clockForm.email,
 					code: this.clockForm.code
@@ -140,7 +139,6 @@
 									this.$message.error("发生错误，请联系管理员");
 								}
 							})
-						//添加成功
 						this.closeForm(formName);
 					} else {
 						return false;

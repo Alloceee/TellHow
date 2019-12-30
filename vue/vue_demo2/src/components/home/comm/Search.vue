@@ -2,7 +2,7 @@
 	<div data-role="search" class="search-show">
 		<el-tabs v-model="activeName" type="border-card" :stretch="true" class="block">
 			<el-tab-pane label="国内航班查询" name="first">
-				<form id="china_form" action="/search" method="post">
+				<form id="china_form" action="/search" method="post" ref="china">
 					<!--                    <div class="col-sm-12">-->
 					<!--                        <label class="css-input css-radio css-radio-info push-10-r">-->
 					<!--                            <input type="radio" name="china-type" checked=""><span></span>单程-->
@@ -18,7 +18,7 @@
 									<div class="col-sm-5">
 										<div class="form-material">
 											<h5 class="font-w300 push">出发地</h5>
-											<RemoteSelect id="china_start" value="" name="startCity"></RemoteSelect>
+											<ChinaCitySelect ref="chinaStartCity"></ChinaCitySelect>
 										</div>
 									</div>
 									<div class="col-sm-2">
@@ -27,7 +27,7 @@
 									<div class="col-sm-5">
 										<div class="form-material">
 											<h5 class="font-w300 push">目的地</h5>
-											<RemoteSelect id="china_end" value="" name="endCity"></RemoteSelect>
+											<ChinaCitySelect ref="chinaEndCity"></ChinaCitySelect>
 										</div>
 									</div>
 								</div>
@@ -37,19 +37,18 @@
 					<div class="col-sm-6">
 						<a class="block block-link-hover3 search-box" href="javascript:void(0);">
 							<div class="block-content">
-								<DateTimePicker></DateTimePicker>
+								<h5 class="font-w300 push">选择搜索时间</h5>
+								<DateTimePicker ref="chinaTime"></DateTimePicker>
 							</div>
 						</a>
 					</div>
 					<div class="col-sm-12">
-						<span class="btn btn-minw search-btn" type="button" id="china_search"><i class="fa fa-search">搜索</i></span>
+						<span class="btn btn-minw search-btn" type="button" @click="submit('china')"><i class="fa fa-search">搜索</i></span>
 					</div>
-					<input type="hidden" name="type" value="0">
-					<input type="hidden" name="userIp" data-role="user_ip">
 				</form>
 			</el-tab-pane>
 			<el-tab-pane label="国外航班查询" name="second">
-				<form id="abroad_form" onsubmit="return false">
+				<form onsubmit="return false" ref="abroad">
 					<!--                    <div class="col-sm-12">-->
 					<!--                        <label class="css-input css-radio css-radio-info push-10-r">-->
 					<!--                            <input type="radio" name="radio-group3" checked=""><span></span>单程-->
@@ -65,7 +64,7 @@
 									<div class="col-sm-5">
 										<div class="form-material">
 											<h5 class="font-w300 push">出发地</h5>
-											<RemoteSelect id="abroad_start" value="" name="startCity"></RemoteSelect>
+											<AbroadCitySelect ref="abroadStartCity"></AbroadCitySelect>
 										</div>
 									</div>
 									<div class="col-sm-2">
@@ -75,27 +74,24 @@
 
 										<div class="form-material">
 											<h5 class="font-w300 push">目的地</h5>
-											<RemoteSelect id="abroad_start" value="" name="startCity"></RemoteSelect>
+											<AbroadCitySelect ref="abroadEndCity"></AbroadCitySelect>
 										</div>
 									</div>
-
 								</div>
-
 							</div>
 						</a>
 					</div>
 					<div class="col-sm-6">
 						<a class="block block-link-hover3 search-box" href="javascript:void(0);">
 							<div class="block-content">
-								<DateTimePicker></DateTimePicker>
+								<h5 class="font-w300 push">选择搜索时间</h5>
+								<DateTimePicker ref="abroadTime"></DateTimePicker>
 							</div>
 						</a>
 					</div>
 					<div class="col-sm-12">
-						<span class="btn btn-minw search-btn" type="button" id="abroad_search"><i class="fa fa-search">搜索</i></span>
+						<span class="btn btn-minw search-btn" type="button" @click="submit('abroad')"><i class="fa fa-search">搜索</i></span>
 					</div>
-					<input type="hidden" name="userIp" data-role="user_ip">
-					<input type="hidden" name="type" value="1">
 				</form>
 			</el-tab-pane>
 			<el-tab-pane label="航班动态" name="third">
@@ -107,7 +103,8 @@
 
 <script>
 	import DateTimePicker from '@/components/home/utils/DateTimePicker.vue'
-	import RemoteSelect from '@/components/home/utils/RemoteSelect.vue'
+	import ChinaCitySelect from '@/components/home/utils/ChinaCitySelect.vue'
+	import AbroadCitySelect from '@/components/home/utils/AbroadCitySelect.vue'
 	import InfinateList from '@/components/home/utils/InfinateList.vue'
 	export default {
 		name: 'Search',
@@ -118,9 +115,61 @@
 		},
 		components: {
 			DateTimePicker,
-			RemoteSelect,
+			ChinaCitySelect,
+			AbroadCitySelect,
 			InfinateList
 		},
+		methods: {
+			submit(formName) {
+				if (formName === 'china') {
+					var startCity = this.$refs.chinaStartCity.selectedOptions;
+					var endCity = this.$refs.chinaEndCity.selectedOptions
+					var time = this.$refs.chinaTime.time;
+					var type = 0;
+				} else if (formName === 'abroad') {
+					var startCity = this.$refs.abroadStartCity.selectedOptions;
+					var endCity = this.$refs.abroadEndCity.selectedOptions
+					var time = this.$refs.abroadTime.time;
+					var type = 1;
+				} else {
+					return false;
+				}
+				startCity = startCity[startCity.length - 1]
+				endCity = endCity[endCity.length - 1]
+				var startTime = time[0]
+				var endTime = time[1]
+				if (startCity === endCity) {
+					this.$message.error("起始城市与目的城市不能相同")
+					return false;
+				}
+				this.$axios
+					.post('/search', {
+						startCity: startCity,
+						endCity: endCity,
+						startTime: startTime,
+						endTime: endTime,
+						type: type
+					})
+					.then(resp => {
+						if (resp.data.code === 200) {
+							var data = resp.data.msg;
+							this.$message({
+								message: data,
+								type: 'success'
+							});
+							var path = _this.$route.query.redirect
+							_this.$router.replace({
+								path: path === '/search' || path === undefined ? '/search' : path
+							})
+						}
+					})
+					.catch(failResponse => {})
+				console.log(startCity);
+				console.log(endCity);
+				console.log(startTime);
+				console.log(endTime);
+			}
+		}
 	}
 </script>
 

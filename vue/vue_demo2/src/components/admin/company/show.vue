@@ -124,7 +124,7 @@
 				delData: '',
 				currentPage: 1,
 				pageSize: 7,
-				pageTotal: '',
+				pageTotal: 0,
 				tableHeight: window.innerHeight - 250,
 				tableData: '',
 				key: '',
@@ -173,9 +173,8 @@
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.data;
-							this.tableData = data.records;
-							this.pageTotal = data.total;
+							this.tableData = resp.data.data.records;
+							this.pageTotal = resp.data.data.total;
 						}
 					})
 					.catch(failResponse => {})
@@ -280,7 +279,6 @@
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							this.tableData = data;
 							this.$message({
 								message: resp.data.msg,
 								type: 'success'
