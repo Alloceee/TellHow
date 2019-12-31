@@ -36,7 +36,7 @@
 									<i slot="prefix" class="el-input__icon el-icon-search"></i>
 								</el-input>
 							</el-col>
-							<el-col :span="2">
+						<el-button-group>
 								<el-popover placement="top" width="160" v-model="allDel">
 									<p>确定一次删除所选内容吗？</p>
 									<div style="text-align: right; margin: 0">
@@ -47,8 +47,6 @@
 										<i class="el-icon-delete"></i>
 									</el-button>
 								</el-popover>
-							</el-col>
-							<el-col :span="2">
 								<el-popover placement="top" width="200">
 									<p>导出excel</p>
 									<div style="text-align: right; margin: 0">
@@ -59,21 +57,21 @@
 										<i class="el-icon-document-add"></i>
 									</el-button>
 								</el-popover>
-							</el-col>
-							<el-col :span="2">
 								<el-button size="mini">
 									<i class="el-icon-printer"></i>
 								</el-button>
-							</el-col>
+							</el-button-group>
 						</el-row>
 					</template>
 					<template slot-scope="scope">
+						<el-button-group>
 						<el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
 							<i class="el-icon-edit"></i>
 						</el-button>
 						<el-button type="danger" size="mini" @click="openDel(scope.$index, scope.row)">
 							<i class="el-icon-delete"></i>
 						</el-button>
+						</el-button-group>
 					</template>
 				</el-table-column>
 			</el-table>

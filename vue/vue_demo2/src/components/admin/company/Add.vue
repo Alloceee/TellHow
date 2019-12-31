@@ -18,11 +18,13 @@
 						<el-input type="textarea" :rows="7" v-model="companyForm.description"></el-input>
 					</el-form-item>
 					<el-form-item>
+						<el-button-group>
 						<el-button @click="fileUpload">
 							<i class="el-icon-folder-add"></i>
 						</el-button>
 						<el-button type="primary" @click="submitForm('companyForm')">添 加</el-button>
 						<el-button @click="resetForm('companyForm')">重 置</el-button>
+						</el-button-group>
 					</el-form-item>
 				</el-form>
 			</el-col>

@@ -61,8 +61,24 @@
 </script>
 
 <style scoped="scoped">
+	@media screen and (max-width: 780px){
+		.footer-icon{
+			display: none;
+		}
+	}
+	@media screen and (max-height: 950px)  {
+		.footer-icon{
+			display: none;
+		}
+	}
+	@media screen and (max-height: 730px)  {
+		.container-full{
+			display: none;
+		}
+	}
 	.container-full{
 		margin-top: 20px;
+		position: relative;
 	}
 	/* footer */
 	.footer-bottom{

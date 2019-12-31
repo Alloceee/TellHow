@@ -2,7 +2,7 @@
 	<div>
 		<el-row :gutter="20">
 			<el-col :span="12">
-				<el-form :model="fight" :rules="rules" ref="news" label-width="100px" class="demo-ruleForm">
+				<el-form :model="fight" :rules="rules" ref="fight" label-width="100px" class="demo-ruleForm">
 					<el-form-item label="所属客机" prop="planeId">
 						 <el-select v-model="fight.planeId" filterable placeholder="请选择">
 						    <el-option
@@ -34,15 +34,17 @@
 						<el-input v-model="fight.price"></el-input>
 					</el-form-item>
 					<el-form-item label="航班类型" prop="type">
-						 <el-radio v-model="fight.type" label="1">国内航班</el-radio>
-						  <el-radio v-model="fight.type" label="2">国外航班</el-radio>
+						 <el-radio v-model="fight.type" label="china">国内航班</el-radio>
+						  <el-radio v-model="fight.type" label="abroad">国外航班</el-radio>
 					</el-form-item>
 					<el-form-item>
+						<el-button-group>
 						<el-button @click="fileUpload">
 							<i class="el-icon-folder-add"></i>
 						</el-button>
-						<el-button type="primary" @click="submitForm('news')">添 加</el-button>
-						<el-button @click="resetForm('news')">重 置</el-button>
+						<el-button type="primary" @click="submitForm('fight')">添 加</el-button>
+						<el-button @click="resetForm('fight')">重 置</el-button>
+						</el-button-group>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -78,7 +80,7 @@
 			return {
 				imageUrl: '',
 				fight: {
-					type: "1",
+					type: "china",
 					plane:''
 				},
 				fileForm: false,
@@ -94,17 +96,21 @@
 		},
 		methods: {
 			submitForm(formName) {
+				var data = {
+					planeId: this.fight.planeId,
+					startCity: this.fight.startCity,
+					endCity: this.fight.endCity,
+					startTime: this.$refs.time.time[0],
+					endTime: this.$refs.time.time[1],
+					startAirport: this.fight.startAirport,
+					endAirport: this.fight.endAirport,
+					price: this.fight.price,
+				};
+				console.log(data);
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
 						this.$axios
-							.post('/admin/news/add', {
-								title: this.news.title,
-								planStartTime: this.$refs.time.time[0],
-								planEndTime: this.$refs.time.time[1],
-								notifyFight: this.news.notifyFight,
-								notifyContent: this.news.notifyContent,
-								status: this.news.status ? 0 : 1
-							})
+							.post('/admin/'+this.fight.type+'Fight/add',data)
 							.then(resp => {
 								if (resp.data.code === 200) {
 									var data = resp.data.msg;
@@ -114,7 +120,7 @@
 									});
 									var path = this.$route.query.redirect
 									this.$router.replace({
-										path: path === '/admin/news/add' || path === undefined ? '/admin/news/show' : path
+										path: path === '/admin/fight/add' || path === undefined ? '/admin/fight/show' : path
 									})
 								}
 							})

@@ -7,36 +7,40 @@
 				<el-table-column type="expand">
 					<template slot-scope="props">
 						<el-form label-position="left" inline class="demo-table-expand">
-							<el-form-item label="公司名称">
-								<span>{{ props.row.name }}</span>
+							<el-form-item label="客机序号">
+								<span>{{ props.row.planeId }}</span>
 							</el-form-item>
-							<el-form-item label="公司详情">
-								<span>{{ props.row.desc }}</span>
+							<el-form-item label="客机类型">
+								<span>{{ props.row.notify_content }}</span>
+							</el-form-item>
+							<el-form-item label="起飞机场">
+								<span>{{ props.row.startAirport }}</span>
+							</el-form-item>
+							<el-form-item label="降落机场">
+								<span>{{ props.row.endAirport }}</span>
 							</el-form-item>
 						</el-form>
 					</template>
 				</el-table-column>
-				<el-table-column label="ID" width="100">
-					<template slot-scope="scope">
-						<span style="margin-left: 10px">{{ scope.row.id }}</span>
-					</template>
+				<el-table-column label="起飞地" prop="startCity">
 				</el-table-column>
-				<el-table-column label="公司名称" width="240" prop="name">
+				<el-table-column label="目的地" prop="endCity">
 				</el-table-column>
-				<el-table-column label="公司图标" width="200" prop="icon">
-					<template slot-scope="scope">
-						<el-avatar shape="square" v-if="scope.row.icon" :size="50" :src="scope.row.icon"></el-avatar>
-					</template>
+				<el-table-column label="起飞时间" prop="startTime">
+				</el-table-column>
+				<el-table-column label="降落时间"  prop="endTime">
+				</el-table-column>
+				<el-table-column label="价格"  prop="price">
 				</el-table-column>
 				<el-table-column align="right">
 					<template slot="header" slot-scope="scope">
-						<el-row :gutter="20">
-							<el-col :span="20">
+						<el-row :gutter="10">
+							<el-col :span="18">
 								<el-input v-model="key" @change="search" size="mini" placeholder="输入关键字搜索">
 									<i slot="prefix" class="el-input__icon el-icon-search"></i>
 								</el-input>
 							</el-col>
-							<el-col :span="4">
+						<el-button-group>
 								<el-popover placement="top" width="160" v-model="allDel">
 									<p>确定一次删除所选内容吗？</p>
 									<div style="text-align: right; margin: 0">
@@ -47,21 +51,36 @@
 										<i class="el-icon-delete"></i>
 									</el-button>
 								</el-popover>
-							</el-col>
+								<el-popover placement="top" width="200">
+									<p>导出excel</p>
+									<div style="text-align: right; margin: 0">
+										<el-button type="primary" size="mini" @click="exportSelect()">所选数据</el-button>
+										<el-button type="primary" size="mini" @click="exportAll()">所有数据</el-button>
+									</div>
+									<el-button size="mini" slot="reference">
+										<i class="el-icon-document-add"></i>
+									</el-button>
+								</el-popover>
+								<el-button size="mini">
+									<i class="el-icon-printer"></i>
+								</el-button>
+							</el-button-group>
 						</el-row>
 					</template>
 					<template slot-scope="scope">
+						<el-button-group>
 						<el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
 							<i class="el-icon-edit"></i>
 						</el-button>
 						<el-button type="danger" size="mini" @click="openDel(scope.$index, scope.row)">
 							<i class="el-icon-delete"></i>
 						</el-button>
+						</el-button-group>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<el-pagination small="" layout="total, sizes, prev, pager, next, jumper" :total="1000" @size-change="handleSizeChange"
+		<el-pagination small="" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal" @size-change="handleSizeChange"
 		 @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[7, 20, 40, 70,100]" :page-size="pageSize">
 		</el-pagination>
 		<el-dialog title="提示" :visible.sync="del" width="30%" center>
@@ -71,20 +90,37 @@
 				<el-button type="primary" @click="handleDelete()">确 定</el-button>
 			</span>
 		</el-dialog>
-		<el-dialog title="修改公司信息" :visible.sync="dialogFormVisible">
-			<el-form :model="company" ref="company" :rules="rules">
-				<el-form-item label="公司名称" :label-width="formLabelWidth" prop="name">
-					<el-input v-model="company.name" autocomplete="off"></el-input>
+		<el-dialog title="修改航班信息" :visible.sync="dialogFormVisible">
+			<el-form :model="fight" :rules="rules" ref="fight" label-width="100px" class="demo-ruleForm">
+			<el-form-item label="所属客机" prop="planeId">
+				 <el-select v-model="fight.planeId" filterable placeholder="请选择">
+				    <el-option
+				      v-for="item in fight.plane"
+				      :key="item.id"
+				      :label="item.number"
+				      :value="item.id">
+					    <span style="float: left">{{ item.number }}</span>
+					    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.model }}</span>
+				    </el-option>
+				  </el-select>
+			  </el-form-item>
+				<el-form-item label="目的地" prop="endCity">
+					<el-input v-model="fight.endCity"></el-input>
 				</el-form-item>
-				<el-form-item label="公司图标" :label-width="formLabelWidth" prop="icon">
-					<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
-					 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-						<img v-if="company.icon" :src="company.icon" class="avatar">
-						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload>
+				<el-form-item label="始发地" prop="startCity">
+					<el-input v-model="fight.startCity"></el-input>
 				</el-form-item>
-				<el-form-item label="公司介绍" :label-width="formLabelWidth" prop="desc">
-					<el-input type="textarea" :rows="7" v-model="company.desc"></el-input>
+				<el-form-item label="起飞抵达时间" prop="content">
+					<DateTimePicker ref="time"></DateTimePicker>
+				</el-form-item>
+				<el-form-item label="起飞机场" prop="startAirport">
+					<el-input v-model="fight.startAirport"></el-input>
+				</el-form-item>
+				<el-form-item label="目的机场" prop="endAirport">
+					<el-input v-model="fight.endAirport"></el-input>
+				</el-form-item>
+				<el-form-item label="价格" prop="price">
+					<el-input v-model="fight.price"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -96,8 +132,12 @@
 </template>
 
 <script>
+	import DateTimePicker from '@/components/home/utils/DateTimePicker.vue'
 	export default {
-		name: 'CompanyShow',
+		name: 'FightShow',
+		components: {
+			DateTimePicker
+		},
 		data() {
 			return {
 				allDel: false,
@@ -106,108 +146,72 @@
 				dialogFormVisible: false,
 				delData: '',
 				currentPage: 1,
-				pageSize: 4,
+				pageSize: 7,
+				pageTotal: 0,
 				tableHeight: window.innerHeight - 250,
-				tableData: [{
-					id: '21',
-					icon: 'http://www.yewenshu.top/FvqzOvcwhaNhm3nE1U2OFD0XD6_o',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄上海市普陀区金沙江路 1518 弄'
-				}, {
-					id: '2',
-					icon: 'http://www.yewenshu.top/FtT05qhCUynDSBnyYu7Lg_zEJnbL',
-					name: '上海',
-					desc: '上海市普陀区金沙江路 1517 弄'
-				}, {
-					id: '3',
-					icon: 'http://www.yewenshu.top/Fi2KHPOlAnQphX2TtafgELGnsIUu',
-					name: '深圳',
-					desc: '上海市普陀区金沙江路 1519 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '背景航空',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '王小虎',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}, {
-					id: '4',
-					icon: 'http://www.yewenshu.top/Fh7k1QodHX7fGJmX7XGmqPfL1MAN',
-					name: '哈尔滨航空',
-					desc: '上海市普陀区金沙江路 1516 弄'
-				}],
+				tableData: '',
 				key: '',
 				imageUrl: '',
-				company: {
-					id: '',
-					name: '',
-					icon: '',
-					desc: ''
+				fight: {
+				
 				},
+				options: [{
+					value: 'zhinan',
+					label: '起飞时间12-25',
+					}],
 				formLabelWidth: '120px',
 				rules: {
-					name: [{
+					title: [{
 							required: true,
 							message: '请输入公司名称',
 							trigger: 'blur'
-						},
-						{
-							min: 2,
-							max: 10,
-							message: '长度在 2 到 10 个字符',
-							trigger: 'blur'
 						}
-					],
-					icon: [{
-						required: true,
-						message: '请上传公司标题'
-					}],
-					desc: [{
-						required: true,
-						message: '请填写公司介绍',
-						trigger: 'blur'
-					}]
+					]
 				}
 			}
 		},
+		created() {
+			this.initDate("/admin/chinaFight/all");
+		},
 		methods: {
+			initDate(url) {
+				this.$axios
+					.post(url, {
+						pageSize: this.pageSize,
+						currentPage: this.currentPage
+					})
+					.then(resp => {
+						if (resp.data.code === 200) {
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
+						}
+					})
+					.catch(failResponse => {})
+			},
 			// 编辑
 			handleEdit(index, row) {
-				this.company.id = row.id;
-				this.company.name = row.name;
-				this.company.desc = row.desc;
-				this.company.icon = row.icon;
+				this.fight.startCity = row.startCity;
+				this.fight.endCity = row.endCity;
+				this.fight.startTime = [row.planStartTime,row.planEndTime];
+				this.fight.startAirport = row.startAirport;
+				this.fight.endAirport = row.endAirport;
+				this.fight.price = row.price;
 				this.dialogTableVisible = true;
 				this.dialogFormVisible = true;
 			},
 			openDel(index, row) {
 				this.del = true;
-				this.delData = row.id;
+				this.delData = [row];
 			},
 			// 删除
 			handleDelete() {
-				alert("单选删除");
-				console.log(this.delData);
-				this.delete(this.delDate);
+				this.delete();
 				this.del = false;
 			},
 			deleteAll() {
-				alert("全选删除");
-				this.delete(this.multipleSelection);
-				console.log(this.multipleSelection);
+				this.delData = this.multipleSelection
+				this.delete();
 				this.allDel = false;
 			},
 			toggleSelection(rows) {
@@ -225,8 +229,14 @@
 			},
 			// 头像上传
 			handleAvatarSuccess(res, file) {
-				this.imageUrl = URL.createObjectURL(file.raw);
-				this.companyForm.resource = res;
+				if (res.code === 200) {
+					this.$message({
+						message: res.msg,
+						type: 'success'
+					})
+					this.imageUrl = URL.createObjectURL(file.raw);
+					this.company.icon = res.data;
+				}
 			},
 			beforeAvatarUpload(file) {
 				const isJPG = file.type === ('image/jpeg') || ('image/png');
@@ -244,92 +254,133 @@
 			handleSizeChange(val) {
 				this.pageSize = val;
 				this.$axios
-					.post('/admin/company/show', {
+					.post('/admin/news/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
-							this.tableData = data;
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
 						}
 					})
-				alert(`每页 ${val} 条`);
 			},
 			handleCurrentChange(val) {
 				this.currentPage = val;
 				this.$axios
-					.post('/admin/company/show', {
+					.post('/admin/news/all', {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
-							this.tableData = data;
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
 						}
 					})
-				alert(`当前页: ${val}`);
 			},
-			delete(delDate) {
+			delete() {
+				var _this = this;
 				//发送删除请求
 				this.$axios
-					.post('/admin/company/del', {
-						companies: delDate
+					.post('/admin/news/del', {
+						'news': this.delData
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
 							this.tableData = data;
+							this.$message({
+								message: resp.data.msg,
+								type: 'success'
+							});
+							this.initDate();
+						} else {
+							this.$message.error('删除出错');
 						}
 					})
-				this.$message({
-					message: '删除成功',
-					type: 'success'
-				});
-				this.$message.error('删除出错');
+			},
+			exportSelect() {
+				this.$axios
+					.post('/admin/export/news', {
+						'companies': this.multipleSelection
+					})
+					.then(res => {
+						var blob = new Blob([res.data]); 
+						var downloadElement = document.createElement('a');
+						var href = window.URL.createObjectURL(blob); //创建下载的链接
+						downloadElement.href = href;
+						downloadElement.download = headers['content-disposition']; //下载后文件名
+						document.body.appendChild(downloadElement);
+						downloadElement.click(); //点击下载
+						document.body.removeChild(downloadElement); //下载完成移除元素
+						window.URL.revokeObjectURL(href); //释放掉blob对象
+					})
+			},
+			exportAll() {
+				this.$axios
+					.post('/admin/export/news', {
+						'companies': this.tableData
+					})
+					.then(res => {
+						var blob = new Blob([res.data]); //指定格式为vnd.ms-excel
+						var downloadElement = document.createElement('a');
+						var href = window.URL.createObjectURL(blob); //创建下载的链接
+						downloadElement.href = href;
+						downloadElement.download = '12.xls'; //下载后文件名
+						document.body.appendChild(downloadElement);
+						downloadElement.click(); //点击下载
+						document.body.removeChild(downloadElement); //下载完成移除元素
+						window.URL.revokeObjectURL(href); //释放掉blob对象
+					})
 			},
 			//搜索表单信息
 			search() {
-				console.log(this.key);
 				this.$axios
-					.post('/admin/company/search', {
+					.post('/admin/news/all', {
+						pageSize: this.pageSize,
+						currentPage: this.currentPage,
 						key: this.key
 					})
 					.then(resp => {
 						if (resp.data.code === 200) {
-							var data = resp.data.msg;
-							this.tableData = data;
+							var data = resp.data.data;
+							this.tableData = data.records;
+							this.pageTotal = data.total;
 						}
 					})
+					.catch(failResponse => {})
 			},
 			//提交表单
 			submit(formName) {
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						this.$axios
-							.post('/admin/company/update', {
-								id: this.company.id,
-								name: this.company.name,
-								icon: this.company.icon,
-								description: this.company.desc
-							})
-							.then(resp => {
-								if (resp.data.code === 200) {
-									var data = resp.data.msg;
-									this.$message({
-										message: '修改成功',
-										type: 'success'
-									});
-									this.dialogTableVisible = false;
-									this.dialogFormVisible = false;
-								}
-							})
-					} else {
-						this.$message.error('修改出错');
-						return false;
-					}
-				});
+				console.log(this.$refs.planTime.time);
+			// 	this.$refs[formName].validate((valid) => {
+			// 		if (valid) {
+			// 			this.$axios
+			// 				.post('/admin/company/update', {
+			// 					id: this.company.id,
+			// 					name: this.company.name,
+			// 					icon: this.company.icon,
+			// 					description: this.company.description
+			// 				})
+			// 				.then(resp => {
+			// 					if (resp.data.code === 200) {
+			// 						var data = resp.data.msg;
+			// 						this.$message({
+			// 							message: data,
+			// 							type: 'success'
+			// 						});
+			// 						this.initDate();
+			// 						this.dialogTableVisible = false;
+			// 						this.dialogFormVisible = false;
+			// 					}
+			// 				})
+			// 		} else {
+			// 			this.$message.error('修改出错');
+			// 			return false;
+			// 		}
+			// 	});
 			}
 		}
 	}

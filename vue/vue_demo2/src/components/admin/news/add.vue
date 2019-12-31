@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<el-page-header @back="goBack" content="添加新闻动态"></el-page-header>
 		<el-row :gutter="20">
 			<el-col :span="12">
 				<el-form :model="news" :rules="rules" ref="news" label-width="100px" class="demo-ruleForm">
@@ -14,6 +13,22 @@
 						<el-cascader placeholder="选择航班" v-model="news.notifyFight" :options="options" :props="{ multiple: true }"
 						 filterable></el-cascader>
 					</el-form-item>
+					<el-form-item label="航班类型" prop="type">
+						 <el-radio v-model="news.type" label="1">国内航班</el-radio>
+						  <el-radio v-model="news.type" label="2">国外航班</el-radio>
+					</el-form-item>
+					<el-form-item label="起飞城市" prop="title">
+						<el-input v-model="news.title"></el-input>
+					</el-form-item>
+					<el-form-item label="降落城市" prop="title">
+						<el-input v-model="news.title"></el-input>
+					</el-form-item>
+					<el-form-item label="起飞机场" prop="title">
+						<el-input v-model="news.startAirport"></el-input>
+					</el-form-item>
+					<el-form-item label="降落机场" prop="title">
+						<el-input v-model="news.title"></el-input>
+					</el-form-item>
 					<el-form-item label="是否通知" prop="isNotify">
 						<el-switch v-model="news.isNotify" active-text="通知" inactive-text="不通知">
 						</el-switch>
@@ -26,11 +41,13 @@
 						</el-switch>
 					</el-form-item>
 					<el-form-item>
+						<el-button-group>
 						<el-button @click="fileUpload">
 							<i class="el-icon-folder-add"></i>
 						</el-button>
 						<el-button type="primary" @click="submitForm('news')">添 加</el-button>
 						<el-button @click="resetForm('news')">重 置</el-button>
+						</el-button-group>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -84,7 +101,8 @@
 					notifyFight: '',
 					notifyContent: '',
 					status: true,
-					isNotify: false
+					isNotify: false,
+					type:'1'
 				},
 				fileForm: false,
 				fileList: '',
